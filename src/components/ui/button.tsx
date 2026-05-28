@@ -39,9 +39,20 @@ export interface ButtonProps
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, loading, disabled, children, ...props }, ref) => {
-    const Comp = asChild ? Slot : 'button';
+    // Radix `Slot` requires exactly one React element child and merges props
+    // into it - we cannot wrap it with our own spinner/text spans (that's
+    // what produced "React.Children.only expected to receive a single React
+    // element child" runtime errors). In asChild mode we therefore defer to
+    // the caller's element entirely; the `loading` prop is a no-op there.
+    if (asChild) {
+      return (
+        <Slot ref={ref} className={cn(buttonVariants({ variant, size }), className)} {...props}>
+          {children}
+        </Slot>
+      );
+    }
     return (
-      <Comp
+      <button
         ref={ref}
         className={cn(buttonVariants({ variant, size }), className)}
         disabled={disabled || loading}
@@ -54,7 +65,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           </span>
         )}
         <span className={cn(loading && 'opacity-0', 'flex items-center gap-2')}>{children}</span>
-      </Comp>
+      </button>
     );
   },
 );
