@@ -1,0 +1,86 @@
+import type { Config } from 'tailwindcss';
+
+const config: Config = {
+  darkMode: ['class'],
+  content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
+  theme: {
+    container: { center: true, padding: '2rem', screens: { '2xl': '1400px' } },
+    extend: {
+      colors: {
+        maroon: {
+          50: '#FBF4F5', 100: '#F5E3E6', 200: '#E8C2C8', 300: '#D89AA4',
+          400: '#C57080', 500: '#A8485B', 600: '#8C2D40', 700: '#6B1F2E',
+          800: '#501620', 900: '#380F17',
+        },
+        cream: { 50: '#FDFBF7', 100: '#FAF7F2', 200: '#F2EBDF', 300: '#E8DCC4' },
+        gold: { 400: '#D4B25E', 500: '#C9A24B', 600: '#A8843A' },
+        border: 'hsl(var(--border))',
+        'border-strong': 'hsl(var(--border-strong))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+        bg: 'hsl(var(--bg))',
+        'bg-elevated': 'hsl(var(--bg-elevated))',
+        'bg-muted': 'hsl(var(--bg-muted))',
+        fg: 'hsl(var(--fg))',
+        'fg-muted': 'hsl(var(--fg-muted))',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+        primary: { DEFAULT: 'hsl(var(--primary))', foreground: 'hsl(var(--primary-foreground))' },
+        secondary: { DEFAULT: 'hsl(var(--secondary))', foreground: 'hsl(var(--secondary-foreground))' },
+        destructive: { DEFAULT: 'hsl(var(--destructive))', foreground: 'hsl(var(--destructive-foreground))' },
+        muted: { DEFAULT: 'hsl(var(--muted))', foreground: 'hsl(var(--muted-foreground))' },
+        accent: { DEFAULT: 'hsl(var(--accent))', foreground: 'hsl(var(--accent-foreground))' },
+        card: { DEFAULT: 'hsl(var(--card))', foreground: 'hsl(var(--card-foreground))' },
+        popover: { DEFAULT: 'hsl(var(--popover))', foreground: 'hsl(var(--popover-foreground))' },
+        brand: { DEFAULT: 'hsl(var(--brand))', foreground: 'hsl(var(--brand-fg))', soft: 'hsl(var(--brand-soft))' },
+        success: 'hsl(var(--success))',
+        warning: 'hsl(var(--warning))',
+        danger: 'hsl(var(--danger))',
+        info: 'hsl(var(--info))',
+      },
+      borderRadius: {
+        sm: 'var(--radius-sm)',
+        DEFAULT: 'var(--radius)',
+        lg: 'var(--radius-lg)',
+        xl: 'var(--radius-xl)',
+      },
+      boxShadow: {
+        sm: 'var(--shadow-sm)',
+        DEFAULT: 'var(--shadow-md)',
+        lg: 'var(--shadow-lg)',
+        glow: 'var(--shadow-glow)',
+      },
+      fontFamily: {
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        display: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+      },
+      fontSize: {
+        // 1.25 ratio (perfect-fourth)
+        'display-2xl': ['4.5rem', { lineHeight: '4.5rem', letterSpacing: '-0.04em', fontWeight: '700' }],
+        'display-xl': ['3.75rem', { lineHeight: '3.75rem', letterSpacing: '-0.035em', fontWeight: '700' }],
+        'display-lg': ['3rem', { lineHeight: '3rem', letterSpacing: '-0.03em', fontWeight: '700' }],
+        'display-md': ['2.25rem', { lineHeight: '2.5rem', letterSpacing: '-0.02em', fontWeight: '700' }],
+        'display-sm': ['1.875rem', { lineHeight: '2.25rem', letterSpacing: '-0.015em', fontWeight: '600' }],
+      },
+      keyframes: {
+        in: { from: { opacity: '0', transform: 'translateY(6px)' }, to: { opacity: '1', transform: 'translateY(0)' } },
+        out: { from: { opacity: '1' }, to: { opacity: '0' } },
+        'slide-in-right': { from: { transform: 'translateX(100%)' }, to: { transform: 'translateX(0)' } },
+        'slide-out-right': { from: { transform: 'translateX(0)' }, to: { transform: 'translateX(100%)' } },
+        'slide-in-left': { from: { transform: 'translateX(-100%)' }, to: { transform: 'translateX(0)' } },
+        'fade-in': { from: { opacity: '0' }, to: { opacity: '1' } },
+      },
+      animation: {
+        in: 'in 200ms cubic-bezier(0.2, 0, 0, 1) both',
+        out: 'out 160ms cubic-bezier(0.4, 0, 1, 1) both',
+        'slide-in-right': 'slide-in-right 260ms cubic-bezier(0.2, 0, 0, 1) both',
+        'slide-out-right': 'slide-out-right 200ms cubic-bezier(0.4, 0, 1, 1) both',
+        'slide-in-left': 'slide-in-left 260ms cubic-bezier(0.2, 0, 0, 1) both',
+        'fade-in': 'fade-in 180ms ease both',
+      },
+    },
+  },
+  plugins: [require('tailwindcss-animate')],
+};
+export default config;

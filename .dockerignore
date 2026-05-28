@@ -1,0 +1,17 @@
+node_modules
+.next
+.git
+.gitignore
+.env
+.env.local
+.env.*.local
+*.log
+coverage
+playwright-report
+test-results
+.vscode
+.cursor
+.DS_Store
+uploads
+prisma/dev.db
+prisma/dev.db-journal

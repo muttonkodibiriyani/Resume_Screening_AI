@@ -1,0 +1,27 @@
+# Normalize line endings on checkin
+* text=auto eol=lf
+
+# Treat shell scripts as LF always
+*.sh    text eol=lf
+*.bash  text eol=lf
+
+# Windows scripts stay CRLF
+*.ps1   text eol=crlf
+*.cmd   text eol=crlf
+*.bat   text eol=crlf
+
+# Lockfile is treated as binary so PR diffs don't explode
+package-lock.json binary
+yarn.lock         binary
+
+# Generated artifacts as binary (no merges)
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.pdf   binary
+*.zip   binary
+
+# Documentation language hints for GitHub
+docs/**/*.md linguist-documentation=true
