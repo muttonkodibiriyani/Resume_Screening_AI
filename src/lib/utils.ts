@@ -38,13 +38,23 @@ export function formatBytes(bytes: number): string {
   return `${(bytes / 1024 ** 4).toFixed(2)} TB`;
 }
 
-export function jsonParse<T>(s: string | null | undefined, fallback: T): T {
-  if (!s) return fallback;
-  try {
-    return JSON.parse(s) as T;
-  } catch {
-    return fallback;
+/**
+ * Universal JSON column reader for the dual-schema (SQLite + Postgres)
+ * Prisma setup. SQLite stores JSON as `String`, Postgres uses native `Json`.
+ * - If `s` is null/undefined -> `fallback`.
+ * - If `s` is a string -> parse it (with fallback on bad JSON).
+ * - Otherwise -> assume the driver already gave us a parsed JSON value.
+ */
+export function jsonParse<T>(s: unknown, fallback: T): T {
+  if (s === null || s === undefined) return fallback;
+  if (typeof s === 'string') {
+    try {
+      return JSON.parse(s) as T;
+    } catch {
+      return fallback;
+    }
   }
+  return s as T;
 }
 
 export interface ScoreBandInfo {

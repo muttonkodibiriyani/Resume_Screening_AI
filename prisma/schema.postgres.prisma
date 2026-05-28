@@ -6,13 +6,19 @@
 //   3. Run: npx prisma migrate deploy --schema=prisma/schema.postgres.prisma
 //   4. (Optional, one-time migration from SQLite): npm run db:migrate:postgres
 //
-// Only difference from the SQLite schema: JSON columns use the native
-// PostgreSQL `Json` type instead of stringified JSON in `String` columns.
-// All API/scoring code already calls `jsonParse(...)` so both work.
+// We deliberately keep JSON-shaped fields as `String` (matching SQLite),
+// so the generated Prisma client has identical types for both schemas
+// and the same app code compiles against either provider. The trade-off
+// is no native JSONB indexing in Postgres - acceptable for our access
+// patterns (we always read whole rows, never query inside JSON).
+//
+// `output` is intentionally left at the default so the production build
+// regenerates `@prisma/client` over the SQLite version in the Docker
+// image. The dual-output variant used by `scripts/migrate-to-postgres.ts`
+// is created on demand from that script with `--schema=` overrides.
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../node_modules/.prisma/client-postgres"
 }
 
 datasource db {
@@ -40,23 +46,23 @@ model Benchmark {
   seniority          String
   minExperience      Int
   domainContext      String?
-  primarySkills      Json
-  mandatorySkills    Json
-  goodToHaveSkills   Json
-  technicalDepth     Json
-  functionalDomain   Json
-  architectureExp    Json
-  leadershipExp      Json
-  deliveryExp        Json
-  modernizationExp   Json
-  redFlags           Json
-  weights            Json
-  interviewQuestions Json
+  primarySkills      String
+  mandatorySkills    String
+  goodToHaveSkills   String
+  technicalDepth     String
+  functionalDomain   String
+  architectureExp    String
+  leadershipExp      String
+  deliveryExp        String
+  modernizationExp   String
+  redFlags           String
+  weights            String
+  interviewQuestions String
   idealSummary       String?
-  screeningNotes     Json?
+  screeningNotes     String?
   benchmarkSource    String
   generationMode     String
-  sources            Json?
+  sources            String?
   version            Int         @default(1)
   approvalStatus     String      @default("draft")
   createdBy          String?
@@ -109,19 +115,19 @@ model ScoreResult {
   aiEngine                 String
   modelUsed                String?
   promptVersion            String?
-  weightsSnapshot          Json?
+  weightsSnapshot          String?
   benchmarkVersionAtScore  Int?
-  breakdown                Json
-  matchedSkills            Json
-  missingSkills            Json
-  partiallyEvidenced       Json
-  matchedEvidence          Json
-  missingEvidence          Json
-  redFlagsDetected         Json
-  strengths                Json
-  gaps                     Json
-  interviewFocusAreas      Json
-  interviewQuestions       Json
+  breakdown                String
+  matchedSkills            String
+  missingSkills            String
+  partiallyEvidenced       String
+  matchedEvidence          String
+  missingEvidence          String
+  redFlagsDetected         String
+  strengths                String
+  gaps                     String
+  interviewFocusAreas      String
+  interviewQuestions       String
   finalSummary             String
   rawResponse              String?
   errorMessage             String?
@@ -151,7 +157,7 @@ model AuditLog {
   action     String
   entityType String?
   entityId   String?
-  details    Json?
+  details    String?
   ipAddress  String?
   createdAt  DateTime @default(now())
 

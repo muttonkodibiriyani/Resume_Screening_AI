@@ -31,13 +31,9 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Default to Postgres schema for production builds; SQLite for local.
-# The postgres schema sets a custom `output` so the one-shot SQLite -> Postgres
-# migration script can hold two clients at once; for a production build we
-# want the generated client at the default `@prisma/client` location, so we
-# strip that line when copying.
 ARG DATABASE_PROVIDER=postgresql
 RUN if [ "$DATABASE_PROVIDER" = "postgresql" ]; then \
-        sed '/^[[:space:]]*output[[:space:]]*=/d' prisma/schema.postgres.prisma > prisma/schema.prisma; \
+        cp prisma/schema.postgres.prisma prisma/schema.prisma; \
     fi
 
 # Placeholder env values so `next build`'s server-side module evaluation
