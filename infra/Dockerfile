@@ -40,6 +40,15 @@ RUN if [ "$DATABASE_PROVIDER" = "postgresql" ]; then \
         sed '/^[[:space:]]*output[[:space:]]*=/d' prisma/schema.postgres.prisma > prisma/schema.prisma; \
     fi
 
+# Placeholder env values so `next build`'s server-side module evaluation
+# passes the strict Zod validation in `src/lib/env.ts`. Real secrets are
+# injected at container runtime via App Service / k8s / docker-compose.
+ENV DATABASE_URL="postgresql://build:build@localhost:5432/build" \
+    AUTH_SECRET="build-time-placeholder-secret-please-rotate-1234567890" \
+    AUTH_PROVIDER=local \
+    STORAGE_PROVIDER=local \
+    QUEUE_PROVIDER=memory
+
 RUN npx prisma generate
 RUN npm run build
 
