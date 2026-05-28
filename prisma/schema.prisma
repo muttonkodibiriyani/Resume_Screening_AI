@@ -1,0 +1,188 @@
+// Alshaya AI Recruit - Prisma schema.
+// Default: SQLite (local dev). Swap to Postgres for Azure prod:
+//   1. Change `provider = "postgresql"` (or set via prisma/schema.postgres.prisma).
+//   2. Set DATABASE_PROVIDER=postgresql and DATABASE_URL=postgres://...
+//   3. Run: npx prisma generate && npx prisma migrate deploy
+// See docs/AZURE_DEPLOYMENT.md.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  name      String
+  role      String
+  password  String
+  createdAt DateTime   @default(now())
+  decisions Decision[]
+  audits    AuditLog[]
+
+  @@index([role])
+}
+
+model Benchmark {
+  id                 String      @id @default(cuid())
+  roleTitle          String
+  skillFamily        String
+  seniority          String
+  minExperience      Int
+  domainContext      String?
+  primarySkills      String
+  mandatorySkills    String
+  goodToHaveSkills   String
+  technicalDepth     String
+  functionalDomain   String
+  architectureExp    String
+  leadershipExp      String
+  deliveryExp        String
+  modernizationExp   String
+  redFlags           String
+  weights            String
+  interviewQuestions String
+  idealSummary       String?
+  screeningNotes     String?
+  benchmarkSource    String
+  generationMode     String
+  sources            String?
+  version            Int         @default(1)
+  approvalStatus     String      @default("draft")
+  createdBy          String?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+  candidates         Candidate[]
+
+  @@index([approvalStatus])
+  @@index([skillFamily])
+  @@index([updatedAt])
+}
+
+model Candidate {
+  id               String       @id @default(cuid())
+  benchmarkId      String
+  benchmark        Benchmark    @relation(fields: [benchmarkId], references: [id], onDelete: Cascade)
+  candidateName    String?
+  email            String?
+  phone            String?
+  fileName         String
+  fileType         String
+  fileSize         Int
+  fileSha          String?      // first 16 chars of sha256 for de-dup
+  filePath         String?      // storage provider path (LocalFs or AzureBlob)
+  extractedText    String
+  extractedChars   Int
+  extractionStatus String
+  ocrUsed          Boolean      @default(false)
+  extractionError  String?
+  uploadedAt       DateTime     @default(now())
+  uploadedBy       String?
+  score            ScoreResult?
+  decision         Decision?
+
+  @@index([benchmarkId, uploadedAt])
+  @@index([email])
+  @@index([fileSha])
+}
+
+model ScoreResult {
+  id                       String    @id @default(cuid())
+  candidateId              String    @unique
+  candidate                Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  totalExperience          Float
+  relevantExperience       Float
+  overallScore             Int
+  scoreBand                String
+  recommendation           String
+  risk                     String
+  aiEngine                 String
+  modelUsed                String?
+  promptVersion            String?
+  weightsSnapshot          String?
+  benchmarkVersionAtScore  Int?
+  breakdown                String
+  matchedSkills            String
+  missingSkills            String
+  partiallyEvidenced       String
+  matchedEvidence          String
+  missingEvidence          String
+  redFlagsDetected         String
+  strengths                String
+  gaps                     String
+  interviewFocusAreas      String
+  interviewQuestions       String
+  finalSummary             String
+  rawResponse              String?
+  errorMessage             String?
+  scoredAt                 DateTime  @default(now())
+
+  @@index([overallScore])
+  @@index([aiEngine])
+}
+
+model Decision {
+  id            String    @id @default(cuid())
+  candidateId   String    @unique
+  candidate     Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  decision      String
+  comments      String?
+  decidedBy     String
+  decidedByUser User      @relation(fields: [decidedBy], references: [id])
+  decidedAt     DateTime  @default(now())
+
+  @@index([decision])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+  action     String
+  entityType String?
+  entityId   String?
+  details    String?
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([action])
+  @@index([userId, createdAt])
+  @@index([entityType, entityId])
+}
+
+model Report {
+  id          String   @id @default(cuid())
+  benchmarkId String
+  format      String
+  generatedBy String?
+  filePath    String?
+  createdAt   DateTime @default(now())
+
+  @@index([benchmarkId, createdAt])
+}
+
+model AICall {
+  id            String   @id @default(cuid())
+  provider      String
+  modelUsed     String?
+  promptVersion String?
+  purpose       String   // "scoring" | "benchmark_generation"
+  inputTokens   Int?
+  outputTokens  Int?
+  latencyMs     Int?
+  ok            Boolean
+  errorKind     String?
+  errorMessage  String?
+  costUsd       Float?
+  candidateId   String?
+  benchmarkId   String?
+  createdAt     DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([provider, ok])
+}

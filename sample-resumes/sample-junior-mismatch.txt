@@ -1,0 +1,32 @@
+Anil Sharma
+Software Developer
+anil@example.com | +91 98765 43210
+
+SUMMARY
+Software developer with 3 years of experience working on various projects.
+Responsible for development tasks. Involved in different modules. Worked on
+multiple technologies.
+
+SKILLS
+Java, Python, JavaScript, React, Angular, Vue, Node.js, Spring, Django,
+Flask, MongoDB, MySQL, PostgreSQL, Oracle, Docker, Kubernetes, AWS, Azure,
+GCP, Jenkins, Git, Agile, Scrum, REST, GraphQL, Microservices, CI/CD,
+Machine Learning, Deep Learning, TensorFlow, PyTorch, NLP, Computer Vision,
+Blockchain, IoT, Cloud Computing, DevOps, SRE, Linux, Windows, Networking
+
+EXPERIENCE
+
+Software Developer | Tech Solutions Pvt Ltd
+- Worked on web application
+- Involved in bug fixing
+- Participated in team meetings
+- Responsible for code reviews
+- Developed features for clients
+
+Junior Developer | StartUp Co
+- Worked on backend services
+- Involved in deployment
+- Participated in sprint planning
+
+EDUCATION
+B.E. Computer Science

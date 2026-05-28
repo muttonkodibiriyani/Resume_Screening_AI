@@ -1,0 +1,62 @@
+RAJESH KUMAR
+Senior Azure Integration Architect
+rajesh.kumar@example.com | +971 50 555 1234 | Dubai, UAE
+
+PROFESSIONAL SUMMARY
+17 years of total IT experience with 9 years specializing in Azure Integration Services
+architecture. Proven track record of leading enterprise iPaaS programs, designing
+event-driven architectures, and delivering large-scale integration platforms for
+retail, financial services, and telecom clients across the GCC and APAC regions.
+Certified Azure Solutions Architect Expert (AZ-305) and DevOps Engineer (AZ-400).
+
+CORE SKILLS
+- Azure Logic Apps (Standard & Consumption), Azure Functions
+- Service Bus, Event Grid, Event Hubs, Storage Queues
+- Azure API Management (APIM) — policies, products, developer portal
+- Hybrid connectivity: On-Prem Data Gateway, Private Endpoints, VNet integration
+- Infrastructure-as-Code: Bicep, Terraform
+- CI/CD: Azure DevOps Pipelines, GitHub Actions
+- Observability: Application Insights, Log Analytics, KQL
+- Security: Managed Identity, Key Vault, OAuth2, mTLS
+- Integration patterns: Enterprise Integration Patterns (EIP), saga, pub/sub
+
+PROFESSIONAL EXPERIENCE
+
+Lead Integration Architect | Emirates NBD Bank | 2021 - Present
+- Architected end-to-end enterprise iPaaS on Azure serving 45+ business applications
+- Designed event-driven order processing using Service Bus + Event Grid with 99.95% SLA
+- Led team of 12 integration engineers across 3 geographies
+- Implemented APIM policies (rate limiting, OAuth2, mTLS) across 200+ APIs
+- Established Bicep-based IaC for multi-region (UAE + India) deployment
+- Reduced integration cost by 38% through Logic Apps Standard consolidation
+- Owned HLD/LLD documentation, architecture governance board, security reviews
+
+Solution Architect | Etisalat | 2018 - 2021
+- Designed hybrid integration platform connecting on-prem SAP, Oracle EBS, and Azure
+- Implemented APIM as enterprise API gateway with 300+ APIs
+- Led migration of 80+ BizTalk integrations to Azure Logic Apps
+- Mentored 8 junior developers; established code-review and design-review standards
+
+Senior Integration Developer | Wipro Technologies | 2013 - 2018
+- Built BizTalk and WCF integrations for retail clients in UK
+- Developed Azure Service Bus pub/sub messaging for order management
+
+Software Engineer | Tata Consultancy Services | 2007 - 2013
+- Java/.NET development; SOA Suite integrations
+
+CERTIFICATIONS
+- Microsoft Certified: Azure Solutions Architect Expert (AZ-305) — 2023
+- Microsoft Certified: DevOps Engineer Expert (AZ-400) — 2022
+- Microsoft Certified: Azure Developer Associate (AZ-204) — 2021
+- TOGAF 9 Certified — 2020
+
+EDUCATION
+B.Tech Computer Science, NIT Trichy, India — 2007
+
+PROJECTS HIGHLIGHTS
+- Real-time fraud detection pipeline (Event Hubs + Functions + Azure ML) — handled 2M events/day
+- Customer 360 integration platform — 18-month delivery, 4 regions, zero-downtime cutover
+- API monetization platform on APIM — enabled $4.2M new revenue stream
+
+LANGUAGES
+English (Fluent), Hindi (Native), Arabic (Basic)

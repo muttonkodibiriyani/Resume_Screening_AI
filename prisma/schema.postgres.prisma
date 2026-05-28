@@ -1,0 +1,194 @@
+// Postgres mirror of schema.prisma for Azure / production deployment.
+//
+// Workflow:
+//   1. Set DATABASE_URL to your Postgres connection string.
+//   2. Run: npx prisma generate --schema=prisma/schema.postgres.prisma
+//   3. Run: npx prisma migrate deploy --schema=prisma/schema.postgres.prisma
+//   4. (Optional, one-time migration from SQLite): npm run db:migrate:postgres
+//
+// Only difference from the SQLite schema: JSON columns use the native
+// PostgreSQL `Json` type instead of stringified JSON in `String` columns.
+// All API/scoring code already calls `jsonParse(...)` so both work.
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client-postgres"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  name      String
+  role      String
+  password  String
+  createdAt DateTime   @default(now())
+  decisions Decision[]
+  audits    AuditLog[]
+
+  @@index([role])
+}
+
+model Benchmark {
+  id                 String      @id @default(cuid())
+  roleTitle          String
+  skillFamily        String
+  seniority          String
+  minExperience      Int
+  domainContext      String?
+  primarySkills      Json
+  mandatorySkills    Json
+  goodToHaveSkills   Json
+  technicalDepth     Json
+  functionalDomain   Json
+  architectureExp    Json
+  leadershipExp      Json
+  deliveryExp        Json
+  modernizationExp   Json
+  redFlags           Json
+  weights            Json
+  interviewQuestions Json
+  idealSummary       String?
+  screeningNotes     Json?
+  benchmarkSource    String
+  generationMode     String
+  sources            Json?
+  version            Int         @default(1)
+  approvalStatus     String      @default("draft")
+  createdBy          String?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+  candidates         Candidate[]
+
+  @@index([approvalStatus])
+  @@index([skillFamily])
+  @@index([updatedAt])
+}
+
+model Candidate {
+  id               String       @id @default(cuid())
+  benchmarkId      String
+  benchmark        Benchmark    @relation(fields: [benchmarkId], references: [id], onDelete: Cascade)
+  candidateName    String?
+  email            String?
+  phone            String?
+  fileName         String
+  fileType         String
+  fileSize         Int
+  fileSha          String?
+  filePath         String?
+  extractedText    String
+  extractedChars   Int
+  extractionStatus String
+  ocrUsed          Boolean      @default(false)
+  extractionError  String?
+  uploadedAt       DateTime     @default(now())
+  uploadedBy       String?
+  score            ScoreResult?
+  decision         Decision?
+
+  @@index([benchmarkId, uploadedAt])
+  @@index([email])
+  @@index([fileSha])
+}
+
+model ScoreResult {
+  id                       String    @id @default(cuid())
+  candidateId              String    @unique
+  candidate                Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  totalExperience          Float
+  relevantExperience       Float
+  overallScore             Int
+  scoreBand                String
+  recommendation           String
+  risk                     String
+  aiEngine                 String
+  modelUsed                String?
+  promptVersion            String?
+  weightsSnapshot          Json?
+  benchmarkVersionAtScore  Int?
+  breakdown                Json
+  matchedSkills            Json
+  missingSkills            Json
+  partiallyEvidenced       Json
+  matchedEvidence          Json
+  missingEvidence          Json
+  redFlagsDetected         Json
+  strengths                Json
+  gaps                     Json
+  interviewFocusAreas      Json
+  interviewQuestions       Json
+  finalSummary             String
+  rawResponse              String?
+  errorMessage             String?
+  scoredAt                 DateTime  @default(now())
+
+  @@index([overallScore])
+  @@index([aiEngine])
+}
+
+model Decision {
+  id            String    @id @default(cuid())
+  candidateId   String    @unique
+  candidate     Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  decision      String
+  comments      String?
+  decidedBy     String
+  decidedByUser User      @relation(fields: [decidedBy], references: [id])
+  decidedAt     DateTime  @default(now())
+
+  @@index([decision])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+  action     String
+  entityType String?
+  entityId   String?
+  details    Json?
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([action])
+  @@index([userId, createdAt])
+  @@index([entityType, entityId])
+}
+
+model Report {
+  id          String   @id @default(cuid())
+  benchmarkId String
+  format      String
+  generatedBy String?
+  filePath    String?
+  createdAt   DateTime @default(now())
+
+  @@index([benchmarkId, createdAt])
+}
+
+model AICall {
+  id            String   @id @default(cuid())
+  provider      String
+  modelUsed     String?
+  promptVersion String?
+  purpose       String
+  inputTokens   Int?
+  outputTokens  Int?
+  latencyMs     Int?
+  ok            Boolean
+  errorKind     String?
+  errorMessage  String?
+  costUsd       Float?
+  candidateId   String?
+  benchmarkId   String?
+  createdAt     DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([provider, ok])
+}

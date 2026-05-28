@@ -1,0 +1,60 @@
+FATIMA AL-MANSOORI
+Functional Architect — Oracle EBS Finance & HR
+fatima.almansoori@example.com | +965 555 7890 | Kuwait City, Kuwait
+
+EXECUTIVE SUMMARY
+14 years of Oracle E-Business Suite functional architecture experience across Finance
+(GL, AP, AR, FA, CM, EBTax) and HR (Core HR, Payroll, SSHR, OAB, OLM) modules. Led
+5 full-cycle EBS implementations across GCC (UAE, KSA, Kuwait, Bahrain, Oman) with
+strong statutory compliance depth including VAT, WPS payroll, and IFRS. Delivered
+3 EBS-to-Oracle Fusion migration assessments. CFO/CHRO stakeholder workshop owner.
+
+CORE EXPERTISE
+- Oracle EBS R12.2.x — Finance: GL, AP, AR, FA, CM, EBTax, iExpenses
+- Oracle EBS R12.2.x — HR: Core HR, Payroll, SSHR, OAB, OLM, OTL
+- Chart of Accounts design (multi-org, multi-currency, multi-ledger)
+- Period close optimization — reduced close from 12 days to 6 days
+- Subledger Accounting (SLA) setup
+- GCC statutory compliance: KSA VAT, UAE VAT, Kuwait WPS, Oman ZATCA
+- Payroll element catalog design for GCC nationals and expatriates
+- BI Publisher, FSG reports
+- Oracle Fusion / Cloud HCM migration roadmap
+
+KEY ENGAGEMENTS
+
+Functional Architect | Alghanim Industries | 2020 - Present
+- Owned EBS Finance + HR functional design across Kuwait, UAE, KSA
+- Led period close re-engineering — reduced from 12 to 6 days (50% improvement)
+- Designed multi-org COA for 8 legal entities with multi-currency revaluation
+- Implemented Kuwait WPS payroll with statutory file generation
+- Workshops with CFO and CHRO; bi-weekly steering committee
+- Led CRP1, CRP2, UAT cycles for KSA expansion
+
+Senior Functional Consultant | Almarai Co | 2016 - 2020
+- Full-lifecycle EBS R12 implementation for KSA operations
+- Designed payroll element catalog for 18,000+ employees (Saudis + expats)
+- KSA VAT implementation across AP/AR/EBTax
+- IFRS 15/16 compliance setup in GL and FA
+
+EBS Consultant | PwC Middle East | 2012 - 2016
+- 3 EBS Finance implementations across UAE, Oman, Bahrain
+- Workshop facilitation; CRP and UAT leadership
+
+ERP Analyst | Accenture | 2010 - 2012
+
+CERTIFICATIONS
+- Oracle EBS R12 Financials Certified Implementation Specialist
+- Oracle Cloud HCM Implementation Certified Associate (2023)
+
+EDUCATION
+MBA Finance, American University of Kuwait
+B.Com Accounting, Kuwait University
+
+OUTCOMES
+- 50% reduction in period close cycle
+- $1.2M annual savings via payroll automation
+- 99.7% statutory filing accuracy across 4 GCC countries
+- Successfully delivered EBS-to-Fusion migration assessment for 2 clients
+
+LANGUAGES
+Arabic (Native), English (Fluent)
