@@ -1,0 +1,180 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================================================================
+   Design tokens. Inspired by Material 3 + Uber Base + Apple HIG.
+   - 1.25 type scale (perfect-fourth)
+   - 4px spacing grid
+   - Expressive motion curves
+   ========================================================================= */
+@layer base {
+  :root {
+    /* Surfaces (HSL components, used via hsl(var(--name))) */
+    --bg: 0 0% 100%;
+    --bg-elevated: 0 0% 100%;
+    --bg-muted: 36 33% 97%;
+    --fg: 222 47% 11%;
+    --fg-muted: 215 16% 42%;
+    --border: 36 20% 88%;
+    --border-strong: 36 20% 78%;
+    --input: 36 20% 90%;
+    --ring: 350 56% 27%;
+    --overlay: 222 47% 11%;
+
+    /* Brand */
+    --brand: 350 56% 27%;            /* maroon 700 */
+    --brand-fg: 40 44% 95%;
+    --brand-soft: 350 56% 95%;
+
+    /* Status */
+    --success: 152 60% 34%;
+    --warning: 38 92% 50%;
+    --danger: 0 72% 51%;
+    --info: 217 91% 50%;
+
+    /* Geometry */
+    --radius-sm: 0.375rem;
+    --radius: 0.625rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.5rem;
+
+    /* Elevation */
+    --shadow-sm: 0 1px 2px rgb(15 23 42 / 0.04), 0 1px 3px rgb(15 23 42 / 0.06);
+    --shadow-md: 0 4px 6px -1px rgb(15 23 42 / 0.07), 0 2px 4px -2px rgb(15 23 42 / 0.06);
+    --shadow-lg: 0 10px 30px -10px rgb(15 23 42 / 0.18), 0 4px 8px -4px rgb(15 23 42 / 0.06);
+    --shadow-glow: 0 0 0 4px hsl(var(--ring) / 0.18);
+
+    /* Motion */
+    --ease-out: cubic-bezier(0.2, 0, 0, 1);
+    --ease-in: cubic-bezier(0.4, 0, 1, 1);
+    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Compatibility aliases for the shadcn-style components */
+    --background: var(--bg);
+    --foreground: var(--fg);
+    --card: var(--bg-elevated);
+    --card-foreground: var(--fg);
+    --popover: var(--bg-elevated);
+    --popover-foreground: var(--fg);
+    --primary: var(--brand);
+    --primary-foreground: var(--brand-fg);
+    --secondary: 36 33% 92%;
+    --secondary-foreground: var(--fg);
+    --muted: var(--bg-muted);
+    --muted-foreground: var(--fg-muted);
+    --accent: 42 56% 54%;
+    --accent-foreground: var(--fg);
+    --destructive: var(--danger);
+    --destructive-foreground: 0 0% 98%;
+  }
+
+  .dark {
+    --bg: 224 25% 7%;
+    --bg-elevated: 224 22% 10%;
+    --bg-muted: 224 18% 13%;
+    --fg: 210 40% 96%;
+    --fg-muted: 215 16% 65%;
+    --border: 224 15% 18%;
+    --border-strong: 224 15% 24%;
+    --input: 224 15% 16%;
+    --ring: 350 70% 55%;
+
+    --brand: 350 70% 55%;
+    --brand-fg: 0 0% 100%;
+    --brand-soft: 350 30% 18%;
+
+    --success: 152 60% 50%;
+    --warning: 38 92% 60%;
+    --danger: 0 72% 60%;
+    --info: 217 91% 65%;
+
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.6);
+    --shadow-lg: 0 10px 30px -10px rgb(0 0 0 / 0.7);
+
+    --background: var(--bg);
+    --foreground: var(--fg);
+    --card: var(--bg-elevated);
+    --card-foreground: var(--fg);
+    --popover: var(--bg-elevated);
+    --popover-foreground: var(--fg);
+    --primary: var(--brand);
+    --primary-foreground: var(--brand-fg);
+    --secondary: 224 18% 16%;
+    --secondary-foreground: var(--fg);
+    --muted: var(--bg-muted);
+    --muted-foreground: var(--fg-muted);
+    --accent: 42 56% 60%;
+    --accent-foreground: var(--fg);
+    --destructive: var(--danger);
+    --destructive-foreground: 0 0% 98%;
+  }
+}
+
+/* =========================================================================
+   Base layer
+   ========================================================================= */
+* { border-color: hsl(var(--border)); }
+html { -webkit-tap-highlight-color: transparent; }
+html, body { background: hsl(var(--bg)); color: hsl(var(--fg)); }
+body {
+  font-feature-settings: "cv02","cv03","cv04","cv11","ss01";
+  font-variant-numeric: tabular-nums;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection { background: hsl(var(--brand) / 0.2); color: hsl(var(--fg)); }
+
+/* Tabular numerals for data tables and scores */
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* =========================================================================
+   Components
+   ========================================================================= */
+.alshaya-card {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+.alshaya-gradient {
+  background: linear-gradient(135deg, hsl(var(--brand)) 0%, hsl(var(--brand) / 0.85) 60%, hsl(350 56% 50%) 100%);
+}
+
+.dark .alshaya-gradient {
+  background: linear-gradient(135deg, hsl(350 56% 27%) 0%, hsl(350 56% 45%) 60%, hsl(350 56% 55%) 100%);
+}
+
+.scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: hsl(var(--border-strong)); border-radius: 3px; }
+.scrollbar-thin::-webkit-scrollbar-thumb:hover { background: hsl(var(--fg-muted)); }
+
+/* Focus ring helper */
+.focus-ring {
+  outline: none;
+}
+.focus-ring:focus-visible {
+  box-shadow: var(--shadow-glow);
+  border-color: hsl(var(--ring));
+}
+
+/* Skeleton loader */
+.skeleton {
+  background: linear-gradient(90deg, hsl(var(--bg-muted)) 0%, hsl(var(--border)) 50%, hsl(var(--bg-muted)) 100%);
+  background-size: 200% 100%;
+  animation: skeleton 1.4s linear infinite;
+  border-radius: var(--radius-sm);
+}
+@keyframes skeleton { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+/* Page transitions (used by framer-motion fallback) */
+.fade-in { animation: fadeIn 200ms var(--ease-out) both; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Reduced motion respect */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
