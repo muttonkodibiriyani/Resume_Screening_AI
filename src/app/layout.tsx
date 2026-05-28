@@ -35,7 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
       </head>
-      <body className="font-sans antialiased min-h-screen">
+      <body className="min-h-screen font-sans antialiased">
         <ThemeProvider>
           {children}
           <Toaster />

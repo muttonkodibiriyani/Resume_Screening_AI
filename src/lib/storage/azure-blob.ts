@@ -77,11 +77,15 @@ export class AzureBlobStorage implements StorageDriver {
       const buffer = await blob.downloadToBuffer();
       const props = await blob.getProperties();
       const ext = path.extname(blobPath).toLowerCase();
-      const contentType = props.contentType
-        || (ext === '.pdf' ? 'application/pdf'
-        : ext === '.docx' ? 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-        : ext === '.txt' ? 'text/plain'
-        : 'application/octet-stream');
+      const contentType =
+        props.contentType ||
+        (ext === '.pdf'
+          ? 'application/pdf'
+          : ext === '.docx'
+            ? 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+            : ext === '.txt'
+              ? 'text/plain'
+              : 'application/octet-stream');
       return { buffer, contentType };
     } catch {
       return null;

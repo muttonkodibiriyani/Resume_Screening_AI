@@ -34,8 +34,14 @@ describe('scoreWithRules', () => {
     primarySkills: ['Azure', 'Integration', 'API Management'],
     mandatorySkills: ['Logic Apps'],
     weights: {
-      years: 10, primarySkillDepth: 25, architectureArtifacts: 20, projectFootprint: 15,
-      leadership: 10, modernization: 10, certifications: 5, communication: 5,
+      years: 10,
+      primarySkillDepth: 25,
+      architectureArtifacts: 20,
+      projectFootprint: 15,
+      leadership: 10,
+      modernization: 10,
+      certifications: 5,
+      communication: 5,
     },
     interviewQuestions: ['Walk me through your last HLD'],
     seniority: 'Architect',
@@ -66,7 +72,11 @@ AWS Certified.`;
   });
 
   it('clamps overall score to 100', () => {
-    const r = scoreWithRules({ resumeText: 'Azure Integration API Management Logic Apps '.repeat(50), candidateName: 'X', benchmark });
+    const r = scoreWithRules({
+      resumeText: 'Azure Integration API Management Logic Apps '.repeat(50),
+      candidateName: 'X',
+      benchmark,
+    });
     expect(r.overallScore).toBeLessThanOrEqual(100);
   });
 });

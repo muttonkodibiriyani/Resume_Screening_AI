@@ -31,7 +31,8 @@ function emit(level: Level, message: string, context?: Record<string, unknown>):
 
 function prettyFormat(entry: Record<string, unknown>): string {
   const { ts, level, message, ...rest } = entry as { ts: string; level: string; message: string };
-  const colour = level === 'error' ? '\x1b[31m' : level === 'warn' ? '\x1b[33m' : level === 'debug' ? '\x1b[90m' : '\x1b[36m';
+  const colour =
+    level === 'error' ? '\x1b[31m' : level === 'warn' ? '\x1b[33m' : level === 'debug' ? '\x1b[90m' : '\x1b[36m';
   const reset = '\x1b[0m';
   const restStr = Object.keys(rest).length ? ' ' + JSON.stringify(rest) : '';
   return `${colour}[${level.toUpperCase()}]${reset} ${ts} ${message}${restStr}`;

@@ -2,7 +2,11 @@
 export function parseAIJson<T = unknown>(raw: string): T | null {
   if (!raw) return null;
   let s = raw.trim();
-  s = s.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
+  s = s
+    .replace(/^```json\s*/i, '')
+    .replace(/^```\s*/i, '')
+    .replace(/```\s*$/i, '')
+    .trim();
   try {
     return JSON.parse(s) as T;
   } catch {

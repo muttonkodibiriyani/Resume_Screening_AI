@@ -14,7 +14,10 @@ interface SbSender {
 }
 
 interface SbReceiver {
-  subscribe(handlers: { processMessage: (m: { body: unknown }) => Promise<void>; processError: (a: { error: Error }) => Promise<void> }): unknown;
+  subscribe(handlers: {
+    processMessage: (m: { body: unknown }) => Promise<void>;
+    processError: (a: { error: Error }) => Promise<void>;
+  }): unknown;
   close(): Promise<unknown>;
 }
 
@@ -45,7 +48,12 @@ export class ServiceBusQueue implements Queue {
   async enqueue<T>(type: string, payload: T): Promise<string> {
     const client = await this.loadClient();
     if (!this.sender) this.sender = client.createSender(env().AZURE_SERVICE_BUS_QUEUE);
-    const job: QueueJob<T> = { id: `${type}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, type, payload, enqueuedAt: new Date().toISOString() };
+    const job: QueueJob<T> = {
+      id: `${type}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      type,
+      payload,
+      enqueuedAt: new Date().toISOString(),
+    };
     await this.sender.sendMessages({ body: job });
     return job.id;
   }

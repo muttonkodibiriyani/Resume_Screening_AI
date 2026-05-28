@@ -18,7 +18,9 @@ export default function NotFound() {
         </CardHeader>
         <CardContent>
           <Button asChild className="gap-2">
-            <Link href="/dashboard"><Home className="h-4 w-4" /> Back to dashboard</Link>
+            <Link href="/dashboard">
+              <Home className="h-4 w-4" /> Back to dashboard
+            </Link>
           </Button>
         </CardContent>
       </Card>

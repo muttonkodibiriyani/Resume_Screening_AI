@@ -146,14 +146,17 @@ async function tryOCR(buffer: Buffer): Promise<string | null> {
   if (!endpoint || !key) return null;
 
   try {
-    const submit = await fetch(`${endpoint.replace(/\/$/, '')}/formrecognizer/documentModels/prebuilt-read:analyze?api-version=2023-07-31`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/octet-stream',
-        'Ocp-Apim-Subscription-Key': key,
+    const submit = await fetch(
+      `${endpoint.replace(/\/$/, '')}/formrecognizer/documentModels/prebuilt-read:analyze?api-version=2023-07-31`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/octet-stream',
+          'Ocp-Apim-Subscription-Key': key,
+        },
+        body: new Uint8Array(buffer),
       },
-      body: new Uint8Array(buffer),
-    });
+    );
     if (!submit.ok) {
       logger.warn('Document Intelligence submit failed', { status: submit.status });
       return null;
@@ -180,7 +183,10 @@ async function tryOCR(buffer: Buffer): Promise<string | null> {
 /** Best-effort candidate name extractor. Looks at the first 12 lines for a Title-Case name. */
 export function guessCandidateName(text: string): string | null {
   if (!text) return null;
-  const lines = text.split('\n').map((l) => l.trim()).filter((l) => l.length > 0);
+  const lines = text
+    .split('\n')
+    .map((l) => l.trim())
+    .filter((l) => l.length > 0);
 
   // Strategy 1: classic Title-Case line near the top.
   const TITLECASE = /^([A-Z][a-z'`-]+(?:\s+[A-Z][a-z'`-]+){1,4})$/;

@@ -48,11 +48,9 @@ export function Toaster() {
               )}
             >
               <div className="mt-0.5">{ICONS[variant]}</div>
-              <div className="flex-1 min-w-0">
+              <div className="min-w-0 flex-1">
                 <div className="text-sm font-semibold text-fg">{t.title}</div>
-                {t.description && (
-                  <div className="mt-0.5 text-xs text-fg-muted">{t.description}</div>
-                )}
+                {t.description && <div className="mt-0.5 text-xs text-fg-muted">{t.description}</div>}
               </div>
               <button
                 type="button"

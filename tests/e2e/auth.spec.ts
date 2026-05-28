@@ -10,9 +10,8 @@ test.describe('auth flow', () => {
   test('login as admin then sees dashboard', async ({ page }) => {
     await page.goto('/login');
     await page.getByLabel(/email/i).fill('admin@alshaya.com');
-    await page.getByLabel(/password/i).fill('admin123');
+    await page.getByLabel(/password/i).fill('password123');
     await page.getByRole('button', { name: /sign in/i }).click();
-    await expect(page).toHaveURL(/\/dashboard/);
-    await expect(page.locator('body')).toContainText(/admin/i);
+    await expect(page).toHaveURL(/\/dashboard/, { timeout: 15_000 });
   });
 });

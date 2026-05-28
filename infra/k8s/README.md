@@ -16,6 +16,7 @@ kubectl -n alshaya-recruit logs deploy/alshaya-recruit -f
 ```
 
 For production AKS we recommend:
+
 - Replacing the inline Secret with **Azure Key Vault CSI driver** (`SecretProviderClass`).
 - Replacing the PVC `uploads` with **Azure Files (premium)** or fully switching to Azure Blob via `STORAGE_PROVIDER=azure-blob`.
 - Adding `azure-workload-identity` annotations so the pod federates with the same Managed Identity used by the Bicep flow.

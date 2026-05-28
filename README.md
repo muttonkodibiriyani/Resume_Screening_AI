@@ -22,7 +22,7 @@
 5. Audit trail and bias / cost insights are always one click away.
 
 Multi-engine: **Google Gemini**, **Azure OpenAI**, and a deterministic
-local-rule fallback so the platform is *never* offline.
+local-rule fallback so the platform is _never_ offline.
 
 ---
 
@@ -45,13 +45,13 @@ npm run dev
 
 ## Demo accounts (local)
 
-| Email | Role | What you can do |
-|-------|------|----------------|
-| `admin@alshaya.com` | Admin | Everything |
-| `hiring@alshaya.com` | Hiring Manager | Approve, decide, report |
-| `recruiter@alshaya.com` | Recruiter | Benchmarks, upload, decisions |
-| `panel@alshaya.com` | Interview Panel | Read-only candidate pack |
-| `viewer@alshaya.com` | Viewer / SLT | Read-only dashboard |
+| Email                   | Role            | What you can do               |
+| ----------------------- | --------------- | ----------------------------- |
+| `admin@alshaya.com`     | Admin           | Everything                    |
+| `hiring@alshaya.com`    | Hiring Manager  | Approve, decide, report       |
+| `recruiter@alshaya.com` | Recruiter       | Benchmarks, upload, decisions |
+| `panel@alshaya.com`     | Interview Panel | Read-only candidate pack      |
+| `viewer@alshaya.com`    | Viewer / SLT    | Read-only dashboard           |
 
 Password for all: `password123`. Local-only — never use in production.
 
@@ -78,41 +78,41 @@ Full deep-dive: [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md).
 
 ## Documentation map
 
-| Audience | Start here |
-|----------|-----------|
-| Product / business | [`docs/PRD.md`](./docs/PRD.md) |
-| Recruiter / HM / Panel / Admin / SLT | [`docs/USER_GUIDE.md`](./docs/USER_GUIDE.md) |
-| TA Ops Admin | [`docs/ADMIN_GUIDE.md`](./docs/ADMIN_GUIDE.md) |
-| Engineer | [`docs/DEVELOPER.md`](./docs/DEVELOPER.md) |
-| Architect | [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) + [`docs/ADR/`](./docs/ADR/) |
-| Security | [`docs/SECURITY.md`](./docs/SECURITY.md) |
-| Scoring deep dive | [`docs/SCORING_ALGORITHM.md`](./docs/SCORING_ALGORITHM.md) |
-| AI prompting | [`docs/AI_PROMPTING.md`](./docs/AI_PROMPTING.md) + [`docs/AI_MODELS.md`](./docs/AI_MODELS.md) |
-| API consumer | [`docs/API.md`](./docs/API.md) |
-| Azure deploy | [`docs/AZURE_DEPLOYMENT.md`](./docs/AZURE_DEPLOYMENT.md) |
-| On-call | [`docs/RUNBOOK.md`](./docs/RUNBOOK.md) |
-| Release notes | [`CHANGELOG.md`](./CHANGELOG.md) |
+| Audience                             | Start here                                                                                    |
+| ------------------------------------ | --------------------------------------------------------------------------------------------- |
+| Product / business                   | [`docs/PRD.md`](./docs/PRD.md)                                                                |
+| Recruiter / HM / Panel / Admin / SLT | [`docs/USER_GUIDE.md`](./docs/USER_GUIDE.md)                                                  |
+| TA Ops Admin                         | [`docs/ADMIN_GUIDE.md`](./docs/ADMIN_GUIDE.md)                                                |
+| Engineer                             | [`docs/DEVELOPER.md`](./docs/DEVELOPER.md)                                                    |
+| Architect                            | [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) + [`docs/ADR/`](./docs/ADR/)                 |
+| Security                             | [`docs/SECURITY.md`](./docs/SECURITY.md)                                                      |
+| Scoring deep dive                    | [`docs/SCORING_ALGORITHM.md`](./docs/SCORING_ALGORITHM.md)                                    |
+| AI prompting                         | [`docs/AI_PROMPTING.md`](./docs/AI_PROMPTING.md) + [`docs/AI_MODELS.md`](./docs/AI_MODELS.md) |
+| API consumer                         | [`docs/API.md`](./docs/API.md)                                                                |
+| Azure deploy                         | [`docs/AZURE_DEPLOYMENT.md`](./docs/AZURE_DEPLOYMENT.md)                                      |
+| On-call                              | [`docs/RUNBOOK.md`](./docs/RUNBOOK.md)                                                        |
+| Release notes                        | [`CHANGELOG.md`](./CHANGELOG.md)                                                              |
 
 ---
 
 ## Tech stack
 
-| Layer | Choice |
-|-------|--------|
-| Framework | Next.js 15 (App Router, RSC) on Node.js 20 |
-| Language | TypeScript (strict mode) |
-| UI | React 18, Tailwind CSS, Radix UI, Framer Motion, cmdk |
-| Charts | recharts |
-| State (client) | Zustand, SWR |
-| DB | Prisma + SQLite (local) / PostgreSQL (prod) |
-| Auth | Signed JWT cookies (`jose`) + bcrypt; NextAuth + Entra ID scaffold |
-| Storage | Local FS or Azure Blob (drivers in `src/lib/storage/`) |
-| Queue | In-process or Azure Service Bus |
-| AI | Google Gemini SDK, Azure OpenAI, Tavily (research) |
-| Observability | App Insights (prod), structured logger (dev) |
-| Tests | Vitest + Playwright + Testing Library |
-| Infra | Docker, Bicep (App Service / PG / Blob / KV / SB / AFD), AKS alt |
-| CI/CD | GitHub Actions (CI, CD with OIDC, CodeQL), Dependabot |
+| Layer          | Choice                                                             |
+| -------------- | ------------------------------------------------------------------ |
+| Framework      | Next.js 15 (App Router, RSC) on Node.js 20                         |
+| Language       | TypeScript (strict mode)                                           |
+| UI             | React 18, Tailwind CSS, Radix UI, Framer Motion, cmdk              |
+| Charts         | recharts                                                           |
+| State (client) | Zustand, SWR                                                       |
+| DB             | Prisma + SQLite (local) / PostgreSQL (prod)                        |
+| Auth           | Signed JWT cookies (`jose`) + bcrypt; NextAuth + Entra ID scaffold |
+| Storage        | Local FS or Azure Blob (drivers in `src/lib/storage/`)             |
+| Queue          | In-process or Azure Service Bus                                    |
+| AI             | Google Gemini SDK, Azure OpenAI, Tavily (research)                 |
+| Observability  | App Insights (prod), structured logger (dev)                       |
+| Tests          | Vitest + Playwright + Testing Library                              |
+| Infra          | Docker, Bicep (App Service / PG / Blob / KV / SB / AFD), AKS alt   |
+| CI/CD          | GitHub Actions (CI, CD with OIDC, CodeQL), Dependabot              |
 
 ---
 

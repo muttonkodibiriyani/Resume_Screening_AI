@@ -11,12 +11,35 @@ import { cn } from '@/lib/utils';
 type Decision = 'shortlist' | 'hold' | 'reject';
 
 const OPTIONS: { id: Decision; label: string; icon: typeof CheckCircle2; tone: string }[] = [
-  { id: 'shortlist', label: 'Shortlist', icon: CheckCircle2, tone: 'border-emerald-500/40 hover:bg-emerald-500/10 data-[selected=true]:bg-emerald-500/15 data-[selected=true]:border-emerald-500' },
-  { id: 'hold', label: 'Hold', icon: PauseCircle, tone: 'border-amber-500/40 hover:bg-amber-500/10 data-[selected=true]:bg-amber-500/15 data-[selected=true]:border-amber-500' },
-  { id: 'reject', label: 'Reject', icon: XCircle, tone: 'border-red-500/40 hover:bg-red-500/10 data-[selected=true]:bg-red-500/15 data-[selected=true]:border-red-500' },
+  {
+    id: 'shortlist',
+    label: 'Shortlist',
+    icon: CheckCircle2,
+    tone: 'border-emerald-500/40 hover:bg-emerald-500/10 data-[selected=true]:bg-emerald-500/15 data-[selected=true]:border-emerald-500',
+  },
+  {
+    id: 'hold',
+    label: 'Hold',
+    icon: PauseCircle,
+    tone: 'border-amber-500/40 hover:bg-amber-500/10 data-[selected=true]:bg-amber-500/15 data-[selected=true]:border-amber-500',
+  },
+  {
+    id: 'reject',
+    label: 'Reject',
+    icon: XCircle,
+    tone: 'border-red-500/40 hover:bg-red-500/10 data-[selected=true]:bg-red-500/15 data-[selected=true]:border-red-500',
+  },
 ];
 
-export function DecisionForm({ candidateId, initial, initialComments }: { candidateId: string; initial?: string; initialComments?: string }) {
+export function DecisionForm({
+  candidateId,
+  initial,
+  initialComments,
+}: {
+  candidateId: string;
+  initial?: string;
+  initialComments?: string;
+}) {
   const router = useRouter();
   const [decision, setDecision] = useState<Decision | null>((initial as Decision) || null);
   const [comments, setComments] = useState(initialComments || '');
@@ -25,7 +48,11 @@ export function DecisionForm({ candidateId, initial, initialComments }: { candid
   const save = async () => {
     if (!decision) return;
     if (decision !== 'shortlist' && comments.trim().length < 5) {
-      toast({ title: 'Add a short reason', description: '"Hold" and "reject" require at least 5 characters of justification.', variant: 'warning' });
+      toast({
+        title: 'Add a short reason',
+        description: '"Hold" and "reject" require at least 5 characters of justification.',
+        variant: 'warning',
+      });
       return;
     }
     setSaving(true);
@@ -69,7 +96,11 @@ export function DecisionForm({ candidateId, initial, initialComments }: { candid
       <Textarea
         value={comments}
         onChange={(e) => setComments(e.target.value)}
-        placeholder={decision && decision !== 'shortlist' ? 'Required: explain the decision (audit trail)...' : 'Optional notes for hiring panel...'}
+        placeholder={
+          decision && decision !== 'shortlist'
+            ? 'Required: explain the decision (audit trail)...'
+            : 'Optional notes for hiring panel...'
+        }
         rows={4}
       />
       <Button onClick={save} disabled={!decision} loading={saving} className="w-full">

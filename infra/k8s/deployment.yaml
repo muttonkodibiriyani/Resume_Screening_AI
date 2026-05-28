@@ -18,7 +18,7 @@ spec:
     metadata:
       labels: { app: alshaya-recruit }
       annotations:
-        prometheus.io/scrape: "false"
+        prometheus.io/scrape: 'false'
     spec:
       serviceAccountName: alshaya-recruit-sa
       securityContext:
@@ -35,16 +35,16 @@ spec:
               name: http
           env:
             - { name: NODE_ENV, value: production }
-            - { name: PORT, value: "3000" }
-            - { name: HOSTNAME, value: "0.0.0.0" }
+            - { name: PORT, value: '3000' }
+            - { name: HOSTNAME, value: '0.0.0.0' }
             - { name: DATABASE_PROVIDER, value: postgresql }
             - { name: STORAGE_PROVIDER, value: azure-blob }
             - { name: QUEUE_PROVIDER, value: service-bus }
           envFrom:
             - secretRef: { name: alshaya-recruit-secrets }
           resources:
-            requests: { cpu: "250m", memory: "512Mi" }
-            limits:   { cpu: "1500m", memory: "2Gi" }
+            requests: { cpu: '250m', memory: '512Mi' }
+            limits: { cpu: '1500m', memory: '2Gi' }
           readinessProbe:
             httpGet: { path: /api/system/status, port: http }
             initialDelaySeconds: 15
@@ -58,7 +58,7 @@ spec:
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
-            capabilities: { drop: [ ALL ] }
+            capabilities: { drop: [ALL] }
       volumes:
         - name: uploads
           persistentVolumeClaim:
@@ -91,7 +91,7 @@ metadata:
   name: alshaya-recruit-uploads
   namespace: alshaya-recruit
 spec:
-  accessModes: [ "ReadWriteOnce" ]
+  accessModes: ['ReadWriteOnce']
   resources:
     requests: { storage: 20Gi }
 ---
@@ -101,12 +101,12 @@ metadata:
   name: alshaya-recruit
   namespace: alshaya-recruit
   annotations:
-    nginx.ingress.kubernetes.io/proxy-body-size: "20m"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "120"
+    nginx.ingress.kubernetes.io/proxy-body-size: '20m'
+    nginx.ingress.kubernetes.io/proxy-read-timeout: '120'
 spec:
   ingressClassName: nginx
   tls:
-    - hosts: [ "recruit.example.com" ]
+    - hosts: ['recruit.example.com']
       secretName: alshaya-recruit-tls
   rules:
     - host: recruit.example.com
@@ -126,15 +126,15 @@ metadata:
   namespace: alshaya-recruit
 type: Opaque
 stringData:
-  DATABASE_URL: "postgresql://recruit:replace-me@postgres:5432/recruit?sslmode=require"
-  AUTH_SECRET: "replace-me-with-32-char-hex-string"
-  GOOGLE_GEMINI_API_KEY: ""
-  GOOGLE_GEMINI_MODEL: "gemini-2.5-flash"
-  AZURE_OPENAI_API_KEY: ""
-  AZURE_OPENAI_ENDPOINT: ""
-  AZURE_OPENAI_DEPLOYMENT: ""
-  TAVILY_API_KEY: ""
-  AZURE_STORAGE_CONNECTION_STRING: ""
-  AZURE_BLOB_CONTAINER: "resumes"
-  AZURE_SERVICE_BUS_CONNECTION_STRING: ""
-  AZURE_SERVICE_BUS_QUEUE: "scoring-jobs"
+  DATABASE_URL: 'postgresql://recruit:replace-me@postgres:5432/recruit?sslmode=require'
+  AUTH_SECRET: 'replace-me-with-32-char-hex-string'
+  GOOGLE_GEMINI_API_KEY: ''
+  GOOGLE_GEMINI_MODEL: 'gemini-2.5-flash'
+  AZURE_OPENAI_API_KEY: ''
+  AZURE_OPENAI_ENDPOINT: ''
+  AZURE_OPENAI_DEPLOYMENT: ''
+  TAVILY_API_KEY: ''
+  AZURE_STORAGE_CONNECTION_STRING: ''
+  AZURE_BLOB_CONTAINER: 'resumes'
+  AZURE_SERVICE_BUS_CONNECTION_STRING: ''
+  AZURE_SERVICE_BUS_QUEUE: 'scoring-jobs'

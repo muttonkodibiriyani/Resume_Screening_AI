@@ -17,13 +17,25 @@ const DIM_LABELS: Record<string, string> = {
 };
 
 const DEFAULTS: Record<string, number> = {
-  years: 10, primarySkillDepth: 25, architectureArtifacts: 20, projectFootprint: 15,
-  leadership: 10, modernization: 10, certifications: 5, communication: 5,
+  years: 10,
+  primarySkillDepth: 25,
+  architectureArtifacts: 20,
+  projectFootprint: 15,
+  leadership: 10,
+  modernization: 10,
+  certifications: 5,
+  communication: 5,
 };
 
 const MAX: Record<string, number> = {
-  years: 40, primarySkillDepth: 50, architectureArtifacts: 40, projectFootprint: 40,
-  leadership: 40, modernization: 40, certifications: 20, communication: 20,
+  years: 40,
+  primarySkillDepth: 50,
+  architectureArtifacts: 40,
+  projectFootprint: 40,
+  leadership: 40,
+  modernization: 40,
+  certifications: 20,
+  communication: 20,
 };
 
 interface Props {
@@ -69,8 +81,10 @@ export function WeightEditor({ benchmarkId, initial, canEdit }: Props) {
       {Object.entries(DEFAULTS).map(([k]) => (
         <div key={k} className="space-y-1">
           <div className="flex items-center justify-between text-sm">
-            <label htmlFor={`w-${k}`} className="font-medium">{DIM_LABELS[k] || k}</label>
-            <span className="font-bold tabular text-fg">{w[k] || 0}</span>
+            <label htmlFor={`w-${k}`} className="font-medium">
+              {DIM_LABELS[k] || k}
+            </label>
+            <span className="tabular font-bold text-fg">{w[k] || 0}</span>
           </div>
           <input
             id={`w-${k}`}
@@ -86,7 +100,9 @@ export function WeightEditor({ benchmarkId, initial, canEdit }: Props) {
       ))}
       <div className="flex items-center justify-between rounded-lg border border-border p-3 text-sm">
         <span>Total weight</span>
-        <span className={`text-lg font-bold tabular ${sumOk ? 'text-emerald-500' : 'text-amber-500'}`}>{total} / 100</span>
+        <span className={`tabular text-lg font-bold ${sumOk ? 'text-emerald-500' : 'text-amber-500'}`}>
+          {total} / 100
+        </span>
       </div>
       {canEdit && (
         <Button onClick={save} loading={saving} disabled={!sumOk} className="w-full">

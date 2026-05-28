@@ -114,7 +114,10 @@ export async function getSession(): Promise<SessionUser | null> {
   const payload = await verifySession(c.value);
   if (!payload) return null;
   // Confirm user still exists & role hasn't changed.
-  const fresh = await prisma.user.findUnique({ where: { id: payload.id }, select: { id: true, email: true, name: true, role: true } });
+  const fresh = await prisma.user.findUnique({
+    where: { id: payload.id },
+    select: { id: true, email: true, name: true, role: true },
+  });
   if (!fresh) return null;
   return { id: fresh.id, email: fresh.email, name: fresh.name, role: fresh.role as Role };
 }
@@ -139,9 +142,6 @@ export class AuthError extends Error {
 export function callerIp(): string {
   const h = headers();
   return (
-    h.get('cf-connecting-ip') ||
-    h.get('x-real-ip') ||
-    h.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-    'unknown'
+    h.get('cf-connecting-ip') || h.get('x-real-ip') || h.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
   );
 }

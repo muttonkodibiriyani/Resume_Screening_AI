@@ -73,5 +73,9 @@ export const FILE_LIMITS = {
   maxBytesPerFile: 10 * 1024 * 1024, // 10 MB
   maxFiles: 50,
   allowedExtensions: ['.pdf', '.docx', '.txt'] as const,
-  allowedMimeStarts: ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'] as const,
+  allowedMimeStarts: [
+    'application/pdf',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'text/plain',
+  ] as const,
 };

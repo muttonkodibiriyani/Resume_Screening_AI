@@ -31,7 +31,9 @@ export default async function BenchmarkListPage() {
           </p>
         </div>
         <Button asChild className="gap-2">
-          <Link href="/benchmark/ai-research"><Plus className="h-4 w-4" /> New benchmark</Link>
+          <Link href="/benchmark/ai-research">
+            <Plus className="h-4 w-4" /> New benchmark
+          </Link>
         </Button>
       </header>
 
@@ -44,25 +46,31 @@ export default async function BenchmarkListPage() {
               Generate your first AI-researched benchmark to start scoring resumes.
             </p>
             <Button asChild className="mt-2 gap-2">
-              <Link href="/benchmark/ai-research"><Plus className="h-4 w-4" /> Create benchmark</Link>
+              <Link href="/benchmark/ai-research">
+                <Plus className="h-4 w-4" /> Create benchmark
+              </Link>
             </Button>
           </CardContent>
         </Card>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {benchmarks.map((b) => (
-            <Link
-              key={b.id}
-              href={`/benchmark/${b.id}`}
-              className="group block"
-            >
+            <Link key={b.id} href={`/benchmark/${b.id}`} className="group block">
               <Card className="h-full transition-all group-hover:border-border-strong group-hover:shadow-md">
                 <CardContent className="space-y-3 p-5">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-soft text-brand">
                       <Library className="h-4 w-4" />
                     </div>
-                    <Badge variant={b.approvalStatus === 'approved' ? 'success' : b.approvalStatus === 'draft' ? 'secondary' : 'warning'}>
+                    <Badge
+                      variant={
+                        b.approvalStatus === 'approved'
+                          ? 'success'
+                          : b.approvalStatus === 'draft'
+                            ? 'secondary'
+                            : 'warning'
+                      }
+                    >
                       {b.approvalStatus}
                     </Badge>
                   </div>
@@ -78,7 +86,9 @@ export default async function BenchmarkListPage() {
                       <Users className="h-3 w-3" /> {b._count.candidates}
                     </span>
                   </div>
-                  <div className="text-[10px] text-fg-muted">v{b.version} - updated {formatRelativeTime(b.updatedAt)}</div>
+                  <div className="text-[10px] text-fg-muted">
+                    v{b.version} - updated {formatRelativeTime(b.updatedAt)}
+                  </div>
                 </CardContent>
               </Card>
             </Link>

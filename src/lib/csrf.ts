@@ -9,15 +9,31 @@
  * to fill the header (Same-Origin Policy).
  */
 import { cookies } from 'next/headers';
-import { randomBytes, timingSafeEqual } from 'node:crypto';
 
 const COOKIE = 'csrf-token';
 export const CSRF_HEADER = 'x-csrf-token';
 
+/** Web-Crypto-only random hex generator (works in both Edge and Node runtimes). */
+function randomHex(bytes: number): string {
+  const arr = new Uint8Array(bytes);
+  crypto.getRandomValues(arr);
+  let out = '';
+  for (let i = 0; i < arr.length; i++) out += arr[i]!.toString(16).padStart(2, '0');
+  return out;
+}
+
+/** Constant-time string comparison without `node:crypto`. */
+function constantTimeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let result = 0;
+  for (let i = 0; i < a.length; i++) result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return result === 0;
+}
+
 export function getOrSetCsrfToken(): string {
   const existing = cookies().get(COOKIE)?.value;
   if (existing && existing.length === 64) return existing;
-  const fresh = randomBytes(32).toString('hex');
+  const fresh = randomHex(32);
   cookies().set(COOKIE, fresh, {
     httpOnly: false,
     sameSite: 'lax',
@@ -31,10 +47,6 @@ export function getOrSetCsrfToken(): string {
 export function verifyCsrf(headerValue: string | null): boolean {
   if (!headerValue) return false;
   const cookieValue = cookies().get(COOKIE)?.value;
-  if (!cookieValue || cookieValue.length !== headerValue.length) return false;
-  try {
-    return timingSafeEqual(Buffer.from(cookieValue), Buffer.from(headerValue));
-  } catch {
-    return false;
-  }
+  if (!cookieValue) return false;
+  return constantTimeEqual(cookieValue, headerValue);
 }

@@ -37,3 +37,6 @@ tsconfig.tsbuildinfo
 
 # Generated docs
 docs/openapi.yaml
+
+# transient commit message buffer used by the assistant
+.commit-msg.tmp

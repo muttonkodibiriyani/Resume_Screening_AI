@@ -51,7 +51,7 @@ export function ScoreRadial({ dims, overall, size = 280, className }: ScoreRadia
       </ResponsiveContainer>
       <div className="pointer-events-none absolute inset-0 grid place-items-center text-center">
         <div>
-          <div className="text-display-md font-bold tabular text-fg">{overall}</div>
+          <div className="tabular text-display-md font-bold text-fg">{overall}</div>
           <div className="text-xs font-medium uppercase tracking-wider text-fg-muted">overall</div>
         </div>
       </div>

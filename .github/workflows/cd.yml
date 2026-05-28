@@ -1,31 +1,93 @@
 name: CD
 
+# Triggered automatically on a semver tag push (e.g. v1.0.0, v1.0.0-overhaul)
+# or manually via Run workflow.
+#
+# Two-track design so the workflow is useful immediately on this repo and only
+# touches Azure when the operator has explicitly opted in:
+#
+#   1. image-ghcr  (always runs on tag push)
+#      Builds the production Docker image with the Postgres Prisma schema and
+#      pushes it to ghcr.io/<owner>/<repo>. No third-party secrets required.
+#
+#   2. azure-deploy (gated by `AZURE_DEPLOY_ENABLED` repo/env variable == 'true')
+#      Logs in to Azure via OIDC, pushes the image to ACR, runs the Bicep
+#      template, applies Prisma migrations, and smoke-tests the Front Door
+#      endpoint. Skipped (not failed) when secrets / vars are absent.
+
 on:
   push:
-    tags: [ 'v*.*.*' ]
+    tags: ['v*.*.*']
   workflow_dispatch:
     inputs:
       environment:
         description: 'Target environment (dev|stage|prod)'
         required: true
         default: 'dev'
+      deploy_to_azure:
+        description: 'Also deploy to Azure (requires Azure secrets configured)'
+        type: boolean
+        required: false
+        default: false
 
 concurrency:
-  group: cd-${{ github.event.inputs.environment || 'tag' }}
+  group: cd-${{ github.event.inputs.environment || github.ref_name }}
   cancel-in-progress: false
 
 permissions:
   contents: read
-  id-token: write   # required for OIDC federated login to Azure
+  packages: write
+  id-token: write # required for OIDC federated login to Azure
 
 jobs:
-  release:
-    name: Build, push, deploy
+  image-ghcr:
+    name: Publish image to GHCR
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    environment: ${{ github.event.inputs.environment || 'prod' }}
     env:
-      ENV: ${{ github.event.inputs.environment || 'prod' }}
+      IMAGE_TAG: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Lowercase repo owner
+        id: meta
+        run: echo "repo=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+
+      - name: Build & push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: infra/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ steps.meta.outputs.repo }}:${{ env.IMAGE_TAG }}
+            ghcr.io/${{ steps.meta.outputs.repo }}:latest
+          build-args: |
+            DATABASE_PROVIDER=postgresql
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  azure-deploy:
+    name: Deploy to Azure
+    needs: image-ghcr
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Skipped (green) unless the operator has flipped this repo/environment
+    # variable to 'true' AND provided all required Azure secrets.
+    if: vars.AZURE_DEPLOY_ENABLED == 'true' && (github.event_name == 'push' || inputs.deploy_to_azure == true)
+    environment: ${{ inputs.environment || 'prod' }}
+    env:
+      ENV: ${{ inputs.environment || 'prod' }}
       IMAGE_TAG: ${{ github.ref_name }}
     steps:
       - uses: actions/checkout@v4
@@ -43,7 +105,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build & push image
+      - name: Build & push image to ACR
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -72,6 +134,12 @@ jobs:
               azureOpenAiApiKey=${{ secrets.AZURE_OPENAI_API_KEY }} \
               azureOpenAiEndpoint=${{ secrets.AZURE_OPENAI_ENDPOINT }} \
               azureOpenAiDeployment=${{ secrets.AZURE_OPENAI_DEPLOYMENT }}
+
+      - name: Setup Node for Prisma
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
 
       - name: Run database migrations
         run: |

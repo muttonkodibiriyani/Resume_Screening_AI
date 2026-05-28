@@ -4,8 +4,17 @@ import useSWR from 'swr';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  UploadCloud, FileText, X, CheckCircle2, AlertCircle, Loader2, Sparkles,
-  Trophy, ArrowRight, ScanSearch, Cpu,
+  UploadCloud,
+  FileText,
+  X,
+  CheckCircle2,
+  AlertCircle,
+  Loader2,
+  Sparkles,
+  Trophy,
+  ArrowRight,
+  ScanSearch,
+  Cpu,
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -185,7 +194,8 @@ export default function UploadPage() {
         <p className="text-xs font-semibold uppercase tracking-widest text-fg-muted">Step 1 - Score</p>
         <h1 className="text-display-sm font-semibold tracking-tight">Upload candidate resumes</h1>
         <p className="text-sm text-fg-muted">
-          Drag and drop PDFs, DOCX, or TXT. Each file is extracted, scored against the selected benchmark, and audited in real time.
+          Drag and drop PDFs, DOCX, or TXT. Each file is extracted, scored against the selected benchmark, and audited
+          in real time.
         </p>
       </header>
 
@@ -213,7 +223,9 @@ export default function UploadPage() {
             <div className="flex items-center justify-between rounded-lg border border-dashed border-border p-4 text-sm">
               <span className="text-fg-muted">No benchmarks yet.</span>
               <Button asChild variant="outline" size="sm">
-                <a href="/benchmark/ai-research"><Sparkles className="mr-1.5 h-3.5 w-3.5" /> Generate one</a>
+                <a href="/benchmark/ai-research">
+                  <Sparkles className="mr-1.5 h-3.5 w-3.5" /> Generate one
+                </a>
               </Button>
             </div>
           )}
@@ -230,7 +242,10 @@ export default function UploadPage() {
             type="button"
             onClick={() => inputRef.current?.click()}
             onDrop={onDrop}
-            onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+            onDragOver={(e) => {
+              e.preventDefault();
+              setDragging(true);
+            }}
             onDragLeave={() => setDragging(false)}
             className={`flex w-full flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-10 text-center transition-all ${
               dragging ? 'border-brand bg-brand-soft' : 'border-border bg-bg-muted hover:border-border-strong'
@@ -255,7 +270,9 @@ export default function UploadPage() {
             <div className="mt-5 space-y-2">
               <div className="flex items-center justify-between text-xs text-fg-muted">
                 <span>{files.length} file(s) selected</span>
-                <span>{summary.done} done - {summary.errored} failed</span>
+                <span>
+                  {summary.done} done - {summary.errored} failed
+                </span>
               </div>
               <AnimatePresence initial={false}>
                 {files.map((entry, i) => (
@@ -270,7 +287,9 @@ export default function UploadPage() {
                   >
                     <FileText className="h-5 w-5 flex-shrink-0 text-fg-muted" />
                     <div className="min-w-0 flex-1">
-                      <div className="truncate text-sm font-medium text-fg">{entry.candidateName || entry.file.name}</div>
+                      <div className="truncate text-sm font-medium text-fg">
+                        {entry.candidateName || entry.file.name}
+                      </div>
                       <div className="truncate text-[11px] text-fg-muted">
                         {formatBytes(entry.file.size)}
                         {entry.extractionChars !== undefined && ` - ${entry.extractionChars} chars`}
@@ -301,7 +320,9 @@ export default function UploadPage() {
             <div className="flex items-center gap-2">
               {summary.done > 0 && (
                 <Button variant="outline" size="sm" asChild className="gap-1.5">
-                  <a href={`/ranking?benchmarkId=${benchmarkId}`}><Trophy className="h-3.5 w-3.5" /> See ranking <ArrowRight className="h-3.5 w-3.5" /></a>
+                  <a href={`/ranking?benchmarkId=${benchmarkId}`}>
+                    <Trophy className="h-3.5 w-3.5" /> See ranking <ArrowRight className="h-3.5 w-3.5" />
+                  </a>
                 </Button>
               )}
               <Button onClick={start} disabled={busy || files.length === 0 || !benchmarkId} loading={busy}>
@@ -320,18 +341,34 @@ function StatusChip({ entry }: { entry: FileEntry }) {
     case 'pending':
       return <Badge variant="secondary">queued</Badge>;
     case 'queued':
-      return <Badge variant="info" className="gap-1"><Loader2 className="h-3 w-3 animate-spin" /> queued</Badge>;
+      return (
+        <Badge variant="info" className="gap-1">
+          <Loader2 className="h-3 w-3 animate-spin" /> queued
+        </Badge>
+      );
     case 'extracting':
-      return <Badge variant="info" className="gap-1"><ScanSearch className="h-3 w-3 animate-pulse" /> extracting</Badge>;
+      return (
+        <Badge variant="info" className="gap-1">
+          <ScanSearch className="h-3 w-3 animate-pulse" /> extracting
+        </Badge>
+      );
     case 'extracted':
-      return <Badge variant="info" className="gap-1"><FileText className="h-3 w-3" /> extracted</Badge>;
+      return (
+        <Badge variant="info" className="gap-1">
+          <FileText className="h-3 w-3" /> extracted
+        </Badge>
+      );
     case 'scoring':
-      return <Badge variant="purple" className="gap-1"><Loader2 className="h-3 w-3 animate-spin" /> scoring</Badge>;
+      return (
+        <Badge variant="purple" className="gap-1">
+          <Loader2 className="h-3 w-3 animate-spin" /> scoring
+        </Badge>
+      );
     case 'done': {
       const sb = entry.score !== undefined ? scoreBand(entry.score) : null;
       return (
         <div className="flex items-center gap-2">
-          <span className="text-base font-bold tabular text-fg">{entry.score ?? '-'}</span>
+          <span className="tabular text-base font-bold text-fg">{entry.score ?? '-'}</span>
           {sb && (
             <Badge
               variant={

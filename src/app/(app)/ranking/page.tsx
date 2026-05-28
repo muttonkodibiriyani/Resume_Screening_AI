@@ -44,16 +44,22 @@ export default async function RankingPage({ searchParams }: PageProps) {
           <div>
             <h1 className="text-display-sm font-semibold tracking-tight">Ranking</h1>
             <p className="text-sm text-fg-muted">
-              {selected ? `Candidates scored against "${selected.roleTitle}" v${selected.version}.` : 'No benchmarks yet.'}
+              {selected
+                ? `Candidates scored against "${selected.roleTitle}" v${selected.version}.`
+                : 'No benchmarks yet.'}
             </p>
           </div>
           {selected && (
             <div className="flex gap-2">
               <Button asChild variant="outline" className="gap-2">
-                <Link href={`/upload?benchmarkId=${selected.id}`}><Upload className="h-4 w-4" /> Add resumes</Link>
+                <Link href={`/upload?benchmarkId=${selected.id}`}>
+                  <Upload className="h-4 w-4" /> Add resumes
+                </Link>
               </Button>
               <Button asChild className="gap-2">
-                <Link href={`/reports?benchmarkId=${selected.id}`}><FileBarChart className="h-4 w-4" /> Export report</Link>
+                <Link href={`/reports?benchmarkId=${selected.id}`}>
+                  <FileBarChart className="h-4 w-4" /> Export report
+                </Link>
               </Button>
             </div>
           )}
@@ -68,7 +74,9 @@ export default async function RankingPage({ searchParams }: PageProps) {
                 key={b.id}
                 href={`/ranking?benchmarkId=${b.id}`}
                 className={`whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
-                  b.id === selected?.id ? 'border-brand bg-brand text-brand-foreground' : 'border-border bg-bg hover:border-border-strong'
+                  b.id === selected?.id
+                    ? 'border-brand bg-brand text-brand-foreground'
+                    : 'border-border bg-bg hover:border-border-strong'
                 }`}
               >
                 {b.roleTitle} <span className="opacity-70">({b._count.candidates})</span>
@@ -88,7 +96,9 @@ export default async function RankingPage({ searchParams }: PageProps) {
             </p>
             {selected && (
               <Button asChild className="gap-2">
-                <Link href={`/upload?benchmarkId=${selected.id}`}><Upload className="h-4 w-4" /> Upload resumes</Link>
+                <Link href={`/upload?benchmarkId=${selected.id}`}>
+                  <Upload className="h-4 w-4" /> Upload resumes
+                </Link>
               </Button>
             )}
           </CardContent>
@@ -113,7 +123,9 @@ export default async function RankingPage({ searchParams }: PageProps) {
                       {place}
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className={`flex h-12 w-12 items-center justify-center rounded-full text-xl font-bold ${i === 0 ? 'bg-gold-500/20 text-gold-600' : 'bg-bg-muted text-fg-muted'}`}>
+                      <div
+                        className={`flex h-12 w-12 items-center justify-center rounded-full text-xl font-bold ${i === 0 ? 'bg-gold-500/20 text-gold-600' : 'bg-bg-muted text-fg-muted'}`}
+                      >
                         {i === 0 ? <Trophy className="h-5 w-5" /> : i + 1}
                       </div>
                       <div className="min-w-0">
@@ -123,8 +135,18 @@ export default async function RankingPage({ searchParams }: PageProps) {
                     </div>
                     <div className="flex items-end justify-between">
                       <div>
-                        <div className="text-display-md font-bold tabular text-fg">{c.score?.overallScore || 0}</div>
-                        <Badge variant={sb.color === 'emerald' ? 'success' : sb.color === 'blue' ? 'info' : sb.color === 'amber' ? 'warning' : 'danger'}>
+                        <div className="tabular text-display-md font-bold text-fg">{c.score?.overallScore || 0}</div>
+                        <Badge
+                          variant={
+                            sb.color === 'emerald'
+                              ? 'success'
+                              : sb.color === 'blue'
+                                ? 'info'
+                                : sb.color === 'amber'
+                                  ? 'warning'
+                                  : 'danger'
+                          }
+                        >
                           {sb.short}
                         </Badge>
                       </div>
@@ -174,25 +196,49 @@ export default async function RankingPage({ searchParams }: PageProps) {
                             </Link>
                             <div className="text-[11px] text-fg-muted">{c.email || ''}</div>
                           </td>
-                          <td className="px-4 py-3 text-right text-lg font-bold tabular">{c.score?.overallScore ?? '-'}</td>
+                          <td className="tabular px-4 py-3 text-right text-lg font-bold">
+                            {c.score?.overallScore ?? '-'}
+                          </td>
                           <td className="px-4 py-3">
                             {sb && (
-                              <Badge variant={sb.color === 'emerald' ? 'success' : sb.color === 'blue' ? 'info' : sb.color === 'amber' ? 'warning' : 'danger'}>
+                              <Badge
+                                variant={
+                                  sb.color === 'emerald'
+                                    ? 'success'
+                                    : sb.color === 'blue'
+                                      ? 'info'
+                                      : sb.color === 'amber'
+                                        ? 'warning'
+                                        : 'danger'
+                                }
+                              >
                                 {sb.short}
                               </Badge>
                             )}
                           </td>
                           <td className="max-w-xs px-4 py-3 text-xs">{c.score?.recommendation || '-'}</td>
                           <td className="px-4 py-3">
-                            <Badge variant={c.score?.risk === 'low' ? 'success' : c.score?.risk === 'medium' ? 'warning' : 'danger'}>
+                            <Badge
+                              variant={
+                                c.score?.risk === 'low' ? 'success' : c.score?.risk === 'medium' ? 'warning' : 'danger'
+                              }
+                            >
                               {c.score?.risk || '-'}
                             </Badge>
                           </td>
-                          <td className="px-4 py-3">{c.score?.aiEngine && <EngineBadge engine={c.score.aiEngine} />}</td>
+                          <td className="px-4 py-3">
+                            {c.score?.aiEngine && <EngineBadge engine={c.score.aiEngine} />}
+                          </td>
                           <td className="px-4 py-3">
                             <Badge
                               variant={
-                                decision === 'shortlist' ? 'success' : decision === 'reject' ? 'danger' : decision === 'hold' ? 'warning' : 'secondary'
+                                decision === 'shortlist'
+                                  ? 'success'
+                                  : decision === 'reject'
+                                    ? 'danger'
+                                    : decision === 'hold'
+                                      ? 'warning'
+                                      : 'secondary'
                               }
                             >
                               {decision || 'pending'}

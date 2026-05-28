@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input, Label } from '@/components/ui/input';
@@ -17,6 +17,16 @@ const DEMO_USERS = [
 ];
 
 export default function LoginPage() {
+  // `useSearchParams` (below) requires a Suspense boundary during prerender;
+  // wrapping the inner component prevents the static-export bail-out.
+  return (
+    <Suspense fallback={null}>
+      <LoginPageInner />
+    </Suspense>
+  );
+}
+
+function LoginPageInner() {
   const router = useRouter();
   const search = useSearchParams();
   const next = search?.get('next') || '/dashboard';
@@ -51,7 +61,7 @@ export default function LoginPage() {
 
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
-      <aside className="relative hidden flex-col justify-between overflow-hidden bg-gradient-to-br from-brand via-brand to-brand-dark p-12 text-white lg:flex">
+      <aside className="to-brand-dark relative hidden flex-col justify-between overflow-hidden bg-gradient-to-br from-brand via-brand p-12 text-white lg:flex">
         <div
           aria-hidden
           className="absolute inset-0 opacity-15"
@@ -67,7 +77,9 @@ export default function LoginPage() {
           transition={{ duration: 0.3 }}
           className="relative flex items-center gap-4"
         >
-          <div className="grid h-14 w-14 place-items-center rounded-xl bg-white/15 text-3xl font-black backdrop-blur">A</div>
+          <div className="grid h-14 w-14 place-items-center rounded-xl bg-white/15 text-3xl font-black backdrop-blur">
+            A
+          </div>
           <div>
             <div className="text-xl font-bold tracking-tight">ALSHAYA</div>
             <div className="text-xs uppercase tracking-widest opacity-80">AI Recruit Platform</div>
@@ -81,7 +93,10 @@ export default function LoginPage() {
           className="relative space-y-8"
         >
           <h1 className="font-display text-5xl font-bold leading-[1.05] tracking-tight">
-            AI-powered<br />resume screening,<br />
+            AI-powered
+            <br />
+            resume screening,
+            <br />
             <span className="text-amber-200">done right.</span>
           </h1>
           <p className="max-w-md text-lg text-white/85">
@@ -151,7 +166,9 @@ export default function LoginPage() {
               </form>
 
               <div className="border-t border-border pt-4">
-                <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-fg-muted">Demo accounts (click to fill)</div>
+                <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-fg-muted">
+                  Demo accounts (click to fill)
+                </div>
                 <div className="space-y-1">
                   {DEMO_USERS.map((u) => (
                     <button

@@ -42,10 +42,13 @@ async function main() {
   const benchmarks = await sqlite.benchmark.findMany();
   console.log(`Benchmarks: ${benchmarks.length}`);
   for (const b of benchmarks) {
+    const payload = jsonifyBenchmark(b as unknown as AnyRecord) as unknown as Parameters<
+      typeof pgClient.benchmark.upsert
+    >[0]['create'];
     await pgClient.benchmark.upsert({
       where: { id: b.id },
-      update: jsonifyBenchmark(b),
-      create: jsonifyBenchmark(b),
+      update: payload,
+      create: payload,
     });
   }
 
@@ -58,10 +61,13 @@ async function main() {
   const scores = await sqlite.scoreResult.findMany();
   console.log(`Scores: ${scores.length}`);
   for (const s of scores) {
+    const payload = jsonifyScore(s as unknown as AnyRecord) as unknown as Parameters<
+      typeof pgClient.scoreResult.upsert
+    >[0]['create'];
     await pgClient.scoreResult.upsert({
       where: { id: s.id },
-      update: jsonifyScore(s),
-      create: jsonifyScore(s),
+      update: payload,
+      create: payload,
     });
   }
 
@@ -88,20 +94,52 @@ async function main() {
 
 function parseOrNull(s: string | null | undefined): unknown {
   if (!s) return null;
-  try { return JSON.parse(s); } catch { return null; }
+  try {
+    return JSON.parse(s);
+  } catch {
+    return null;
+  }
 }
 
 type AnyRecord = Record<string, unknown>;
 
 function jsonifyBenchmark(b: AnyRecord): AnyRecord {
-  const stringKeys = ['primarySkills', 'mandatorySkills', 'goodToHaveSkills', 'technicalDepth', 'functionalDomain', 'architectureExp', 'leadershipExp', 'deliveryExp', 'modernizationExp', 'redFlags', 'weights', 'interviewQuestions', 'screeningNotes', 'sources'];
+  const stringKeys = [
+    'primarySkills',
+    'mandatorySkills',
+    'goodToHaveSkills',
+    'technicalDepth',
+    'functionalDomain',
+    'architectureExp',
+    'leadershipExp',
+    'deliveryExp',
+    'modernizationExp',
+    'redFlags',
+    'weights',
+    'interviewQuestions',
+    'screeningNotes',
+    'sources',
+  ];
   const out: AnyRecord = { ...b };
   for (const k of stringKeys) out[k] = parseOrNull(b[k] as string);
   return out;
 }
 
 function jsonifyScore(s: AnyRecord): AnyRecord {
-  const stringKeys = ['breakdown', 'matchedSkills', 'missingSkills', 'partiallyEvidenced', 'matchedEvidence', 'missingEvidence', 'redFlagsDetected', 'strengths', 'gaps', 'interviewFocusAreas', 'interviewQuestions', 'weightsSnapshot'];
+  const stringKeys = [
+    'breakdown',
+    'matchedSkills',
+    'missingSkills',
+    'partiallyEvidenced',
+    'matchedEvidence',
+    'missingEvidence',
+    'redFlagsDetected',
+    'strengths',
+    'gaps',
+    'interviewFocusAreas',
+    'interviewQuestions',
+    'weightsSnapshot',
+  ];
   const out: AnyRecord = { ...s };
   for (const k of stringKeys) out[k] = parseOrNull(s[k] as string);
   return out;

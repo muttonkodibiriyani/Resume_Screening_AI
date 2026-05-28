@@ -30,17 +30,41 @@ const EnvSchema = z.object({
   AZURE_SERVICE_BUS_CONNECTION_STRING: z.string().optional(),
   AZURE_SERVICE_BUS_QUEUE: z.string().default('scoring-jobs'),
 
-  GOOGLE_GEMINI_API_KEY: z.string().optional().transform((v) => v || undefined),
+  GOOGLE_GEMINI_API_KEY: z
+    .string()
+    .optional()
+    .transform((v) => v || undefined),
   GOOGLE_GEMINI_MODEL: z.string().default('gemini-2.5-flash'),
-  AZURE_OPENAI_API_KEY: z.string().optional().transform((v) => v || undefined),
-  AZURE_OPENAI_ENDPOINT: z.string().optional().transform((v) => v || undefined),
+  AZURE_OPENAI_API_KEY: z
+    .string()
+    .optional()
+    .transform((v) => v || undefined),
+  AZURE_OPENAI_ENDPOINT: z
+    .string()
+    .optional()
+    .transform((v) => v || undefined),
   AZURE_OPENAI_DEPLOYMENT: z.string().default('gpt-4o-mini'),
   AZURE_OPENAI_API_VERSION: z.string().default('2024-08-01-preview'),
-  TAVILY_API_KEY: z.string().optional().transform((v) => v || undefined),
-  AZURE_DOC_INTELLIGENCE_ENDPOINT: z.string().optional().transform((v) => v || undefined),
-  AZURE_DOC_INTELLIGENCE_KEY: z.string().optional().transform((v) => v || undefined),
-  COPILOT_STUDIO_WEBHOOK_URL: z.string().optional().transform((v) => v || undefined),
-  COPILOT_STUDIO_API_KEY: z.string().optional().transform((v) => v || undefined),
+  TAVILY_API_KEY: z
+    .string()
+    .optional()
+    .transform((v) => v || undefined),
+  AZURE_DOC_INTELLIGENCE_ENDPOINT: z
+    .string()
+    .optional()
+    .transform((v) => v || undefined),
+  AZURE_DOC_INTELLIGENCE_KEY: z
+    .string()
+    .optional()
+    .transform((v) => v || undefined),
+  COPILOT_STUDIO_WEBHOOK_URL: z
+    .string()
+    .optional()
+    .transform((v) => v || undefined),
+  COPILOT_STUDIO_API_KEY: z
+    .string()
+    .optional()
+    .transform((v) => v || undefined),
 
   APPLICATIONINSIGHTS_CONNECTION_STRING: z.string().optional(),
   UPSTASH_REDIS_REST_URL: z.string().optional(),

@@ -55,7 +55,11 @@ export default async function BenchmarkDetailPage({ params }: PageProps) {
             <Badge variant="secondary">{b.skillFamily}</Badge>
             <Badge variant="secondary">{b.seniority}</Badge>
             <Badge variant="secondary">{b.minExperience}+ yrs</Badge>
-            <Badge variant={b.approvalStatus === 'approved' ? 'success' : b.approvalStatus === 'draft' ? 'warning' : 'secondary'}>
+            <Badge
+              variant={
+                b.approvalStatus === 'approved' ? 'success' : b.approvalStatus === 'draft' ? 'warning' : 'secondary'
+              }
+            >
               {b.approvalStatus}
             </Badge>
             <Badge variant="info">v{b.version}</Badge>
@@ -66,7 +70,9 @@ export default async function BenchmarkDetailPage({ params }: PageProps) {
         </div>
         <div className="flex flex-col gap-2 sm:flex-row lg:flex-col">
           <Button asChild className="gap-2">
-            <Link href={`/upload?benchmarkId=${b.id}`}><Upload className="h-4 w-4" /> Upload resumes</Link>
+            <Link href={`/upload?benchmarkId=${b.id}`}>
+              <Upload className="h-4 w-4" /> Upload resumes
+            </Link>
           </Button>
           <BenchmarkActions
             id={b.id}
@@ -92,7 +98,9 @@ export default async function BenchmarkDetailPage({ params }: PageProps) {
         <TabsContent value="overview" className="grid gap-4 lg:grid-cols-3">
           <Card className="lg:col-span-2">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2"><ListChecks className="h-5 w-5 text-brand" /> Snapshot</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <ListChecks className="h-5 w-5 text-brand" /> Snapshot
+              </CardTitle>
               <CardDescription>The condensed view of this benchmark.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 text-sm">
@@ -153,9 +161,13 @@ export default async function BenchmarkDetailPage({ params }: PageProps) {
               )}
               {screeningNotes.length > 0 && (
                 <div className="mt-6">
-                  <h4 className="mb-3 text-xs font-semibold uppercase tracking-widest text-fg-muted">Screening notes</h4>
+                  <h4 className="mb-3 text-xs font-semibold uppercase tracking-widest text-fg-muted">
+                    Screening notes
+                  </h4>
                   <ul className="space-y-1.5 text-sm">
-                    {screeningNotes.map((n, i) => <li key={i}>- {n}</li>)}
+                    {screeningNotes.map((n, i) => (
+                      <li key={i}>- {n}</li>
+                    ))}
                   </ul>
                 </div>
               )}
@@ -166,7 +178,9 @@ export default async function BenchmarkDetailPage({ params }: PageProps) {
         <TabsContent value="interview">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2"><BookOpen className="h-5 w-5 text-brand" /> Question bank</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <BookOpen className="h-5 w-5 text-brand" /> Question bank
+              </CardTitle>
               <CardDescription>Sharp, role-specific questions for the panel.</CardDescription>
             </CardHeader>
             <CardContent>
@@ -176,7 +190,8 @@ export default async function BenchmarkDetailPage({ params }: PageProps) {
                 <ol className="space-y-2 text-sm">
                   {interview.map((q, i) => (
                     <li key={i} className="rounded-md border border-border p-3">
-                      <span className="mr-2 font-bold tabular text-fg-muted">{String(i + 1).padStart(2, '0')}.</span>{q}
+                      <span className="tabular mr-2 font-bold text-fg-muted">{String(i + 1).padStart(2, '0')}.</span>
+                      {q}
                     </li>
                   ))}
                 </ol>
@@ -189,7 +204,9 @@ export default async function BenchmarkDetailPage({ params }: PageProps) {
           <Card>
             <CardHeader>
               <CardTitle>Scoring weights</CardTitle>
-              <CardDescription>Drag to rebalance how each rubric dimension contributes to the overall score. Must sum to 100.</CardDescription>
+              <CardDescription>
+                Drag to rebalance how each rubric dimension contributes to the overall score. Must sum to 100.
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <WeightEditor benchmarkId={b.id} initial={weights} canEdit={can(user, 'benchmark:update')} />
@@ -201,19 +218,16 @@ export default async function BenchmarkDetailPage({ params }: PageProps) {
           <TabsContent value="sources">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2"><Globe className="h-5 w-5 text-brand" /> Research sources</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <Globe className="h-5 w-5 text-brand" /> Research sources
+                </CardTitle>
                 <CardDescription>Live web research used to build this benchmark.</CardDescription>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2 text-sm">
                   {sources.map((s, i) => (
                     <li key={i}>
-                      <a
-                        className="text-brand hover:underline"
-                        href={s.url}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                      >
+                      <a className="text-brand hover:underline" href={s.url} target="_blank" rel="noreferrer noopener">
                         {s.title}
                       </a>
                     </li>
@@ -237,14 +251,24 @@ function Row({ label, value }: { label: string; value: string }) {
   );
 }
 
-function SnapshotBlock({ title, items, variant }: { title: string; items: string[]; variant: 'default' | 'info' | 'secondary' }) {
+function SnapshotBlock({
+  title,
+  items,
+  variant,
+}: {
+  title: string;
+  items: string[];
+  variant: 'default' | 'info' | 'secondary';
+}) {
   if (items.length === 0) return null;
   return (
     <div>
       <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-fg-muted">{title}</div>
       <div className="flex flex-wrap gap-1.5">
         {items.map((s, i) => (
-          <Badge key={i} variant={variant}>{s}</Badge>
+          <Badge key={i} variant={variant}>
+            {s}
+          </Badge>
         ))}
       </div>
     </div>

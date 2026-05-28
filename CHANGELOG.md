@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ## [1.0.0] — 2026-05-29 — Full overhaul
 
 ### Fixed
+
 - **Critical**: Gemini `gemini-1.5-flash` 404 from upstream deprecation. Default
   model is now `gemini-2.5-flash` and the runtime auto-detects the best
   available `flash` model via a probe of `GET /v1beta/models`.
@@ -24,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - DELETE candidate authorization fix (was missing RBAC).
 
 ### Added
+
 - **Security foundation**
   - Edge middleware (`src/middleware.ts`) with CSP, HSTS (prod),
     X-Frame-Options, Referrer-Policy, Permissions-Policy.
@@ -77,8 +79,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   - Multi-stage Dockerfile (non-root, tini, healthcheck).
   - `infra/docker-compose.yml` for one-command prod-like local stack.
   - Bicep `infra/azure/main.bicep` provisioning App Service + Postgres + Blob
-    + Key Vault + App Insights + Service Bus + Front Door + WAF + Managed
-    Identity role assignments.
+    - Key Vault + App Insights + Service Bus + Front Door + WAF + Managed
+      Identity role assignments.
   - Bash + PowerShell deploy scripts.
   - Kubernetes alternative manifests under `infra/k8s/`.
   - GitHub Actions: `ci.yml`, `cd.yml` (OIDC), `codeql.yml`.
@@ -90,6 +92,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
     seven ADRs, CONTRIBUTING, CODE_OF_CONDUCT, LICENSE, new README.
 
 ### Changed
+
 - All API routes refactored through `apiHandler` wrapper for consistent error
   shape and RBAC enforcement.
 - Inputs validated against Zod schemas in `src/lib/validation/`.
@@ -97,6 +100,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - AICall row written on every AI invocation for cost / latency telemetry.
 
 ### Removed
+
 - `(window as any).__toast` global — replaced by Zustand store in
   `src/components/ui/toast-store.ts`.
 - Fake `setTimeout` upload progress on the upload page.

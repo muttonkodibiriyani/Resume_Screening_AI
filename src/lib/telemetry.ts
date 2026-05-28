@@ -16,7 +16,14 @@ interface AppInsightsClient {
   trackMetric(t: { name: string; value: number; properties?: Record<string, string> }): void;
   trackEvent(t: { name: string; properties?: Record<string, string>; measurements?: Record<string, number> }): void;
   trackException(t: { exception: Error; properties?: Record<string, string> }): void;
-  trackDependency(t: { name: string; dependencyTypeName: string; data?: string; duration: number; resultCode: number; success: boolean }): void;
+  trackDependency(t: {
+    name: string;
+    dependencyTypeName: string;
+    data?: string;
+    duration: number;
+    resultCode: number;
+    success: boolean;
+  }): void;
 }
 
 let client: AppInsightsClient | null = null;
@@ -28,9 +35,17 @@ async function ensureClient(): Promise<AppInsightsClient | null> {
   const conn = env().APPLICATIONINSIGHTS_CONNECTION_STRING;
   if (!conn) return null;
   try {
-    const ai = (await import('applicationinsights' as string)) as {
-      setup(c: string): { setAutoCollectRequests(b: boolean): unknown; setAutoCollectDependencies(b: boolean): unknown; setAutoCollectExceptions(b: boolean): unknown; start(): void; defaultClient: AppInsightsClient };
-    };
+    interface AppInsightsSetup {
+      setAutoCollectRequests(b: boolean): AppInsightsSetup;
+      setAutoCollectDependencies(b: boolean): AppInsightsSetup;
+      setAutoCollectExceptions(b: boolean): AppInsightsSetup;
+      start(): void;
+    }
+    interface AppInsightsModule {
+      setup(c: string): AppInsightsSetup;
+      defaultClient: AppInsightsClient;
+    }
+    const ai = (await import('applicationinsights' as string)) as unknown as AppInsightsModule;
     ai.setup(conn).setAutoCollectRequests(true).setAutoCollectDependencies(true).setAutoCollectExceptions(true).start();
     client = ai.defaultClient;
     logger.info('App Insights initialised');
@@ -56,9 +71,17 @@ export const telemetry = {
     if (c) c.trackException({ exception, properties });
     else logger.error(`exception ${exception.message}`, properties);
   },
-  async dependency(name: string, dependencyType: string, durationMs: number, success: boolean, resultCode = success ? 200 : 500, data?: string): Promise<void> {
+  async dependency(
+    name: string,
+    dependencyType: string,
+    durationMs: number,
+    success: boolean,
+    resultCode = success ? 200 : 500,
+    data?: string,
+  ): Promise<void> {
     const c = await ensureClient();
-    if (c) c.trackDependency({ name, dependencyTypeName: dependencyType, data, duration: durationMs, resultCode, success });
+    if (c)
+      c.trackDependency({ name, dependencyTypeName: dependencyType, data, duration: durationMs, resultCode, success });
     else logger.debug(`dependency ${dependencyType}.${name} ${durationMs}ms ${success ? 'ok' : 'fail'}`);
   },
 };

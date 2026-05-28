@@ -44,7 +44,12 @@ export const PATCH = apiHandler(async (req, { params }) => {
 
   await logAudit({
     userId: user.id,
-    action: body.approvalStatus === 'approved' ? 'BENCHMARK_APPROVED' : body.bumpVersion ? 'BENCHMARK_VERSION_BUMPED' : 'BENCHMARK_UPDATED',
+    action:
+      body.approvalStatus === 'approved'
+        ? 'BENCHMARK_APPROVED'
+        : body.bumpVersion
+          ? 'BENCHMARK_VERSION_BUMPED'
+          : 'BENCHMARK_UPDATED',
     entityType: 'Benchmark',
     entityId: params.id,
     details: body,

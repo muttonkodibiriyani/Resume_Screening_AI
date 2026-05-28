@@ -47,21 +47,34 @@ export function getAIEngineStatus(): AIEngineStatus {
   const modeLabel = engineToLabel(preferredEngine);
 
   return {
-    geminiConfigured, azureOpenAIConfigured, searchConfigured, ocrConfigured,
-    copilotStudioConfigured, pdfExtractionEnabled: true,
-    preferredEngine, preferredEngineForBenchmark, modeLabel,
+    geminiConfigured,
+    azureOpenAIConfigured,
+    searchConfigured,
+    ocrConfigured,
+    copilotStudioConfigured,
+    pdfExtractionEnabled: true,
+    preferredEngine,
+    preferredEngineForBenchmark,
+    modeLabel,
   };
 }
 
 export function engineToLabel(engine: AIEngine): string {
   switch (engine) {
-    case 'gemini': return 'Google Gemini';
-    case 'azure-openai': return 'Azure OpenAI';
-    case 'gemini+search': return 'Google Gemini + Online Search';
-    case 'azure+search': return 'Azure OpenAI + Online Search';
-    case 'copilot-studio': return 'Copilot Studio';
-    case 'local-rule': return 'LOCAL FALLBACK (rule-based)';
-    case 'local-fallback-ai-error': return 'LOCAL FALLBACK (AI error)';
+    case 'gemini':
+      return 'Google Gemini';
+    case 'azure-openai':
+      return 'Azure OpenAI';
+    case 'gemini+search':
+      return 'Google Gemini + Online Search';
+    case 'azure+search':
+      return 'Azure OpenAI + Online Search';
+    case 'copilot-studio':
+      return 'Copilot Studio';
+    case 'local-rule':
+      return 'LOCAL FALLBACK (rule-based)';
+    case 'local-fallback-ai-error':
+      return 'LOCAL FALLBACK (AI error)';
   }
 }
 

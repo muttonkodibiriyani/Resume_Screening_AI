@@ -7,7 +7,10 @@ export interface AzureOpenAICallOpts {
   signal?: AbortSignal;
 }
 
-export async function callAzureOpenAI(prompt: string, opts: AzureOpenAICallOpts = {}): Promise<{ text: string; model: string }> {
+export async function callAzureOpenAI(
+  prompt: string,
+  opts: AzureOpenAICallOpts = {},
+): Promise<{ text: string; model: string }> {
   const apiKey = process.env.AZURE_OPENAI_API_KEY;
   const endpoint = process.env.AZURE_OPENAI_ENDPOINT;
   const deployment = process.env.AZURE_OPENAI_DEPLOYMENT || 'gpt-4o-mini';
@@ -34,7 +37,10 @@ export async function callAzureOpenAI(prompt: string, opts: AzureOpenAICallOpts 
       {
         model: deployment,
         messages: [
-          { role: 'system', content: 'You are a strict JSON-only API. Always return valid JSON. Never include markdown code fences.' },
+          {
+            role: 'system',
+            content: 'You are a strict JSON-only API. Always return valid JSON. Never include markdown code fences.',
+          },
           { role: 'user', content: prompt },
         ],
         temperature: opts.temperature ?? 0.2,

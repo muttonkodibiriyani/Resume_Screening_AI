@@ -3,7 +3,12 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
-  Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogClose,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogClose,
 } from '@/components/ui/dialog';
 import { ShieldCheck, Trash2, ArrowUpCircle } from 'lucide-react';
 import { apiFetch, ApiError } from '@/lib/api-client';
@@ -23,7 +28,10 @@ export function BenchmarkActions({ id, approvalStatus, canApprove, canBumpVersio
 
   const approve = async () => {
     try {
-      await apiFetch(`/api/benchmarks/${id}`, { method: 'PATCH', body: JSON.stringify({ approvalStatus: 'approved' }) });
+      await apiFetch(`/api/benchmarks/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ approvalStatus: 'approved' }),
+      });
       toast({ title: 'Benchmark approved', variant: 'success' });
       router.refresh();
     } catch (e) {
@@ -80,7 +88,9 @@ export function BenchmarkActions({ id, approvalStatus, canApprove, canBumpVersio
                 <DialogClose asChild>
                   <Button variant="outline">Cancel</Button>
                 </DialogClose>
-                <Button variant="destructive" onClick={remove}>Delete permanently</Button>
+                <Button variant="destructive" onClick={remove}>
+                  Delete permanently
+                </Button>
               </div>
             </DialogContent>
           </Dialog>

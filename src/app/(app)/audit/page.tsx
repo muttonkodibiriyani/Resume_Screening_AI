@@ -38,8 +38,12 @@ export default async function AuditPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2"><ScrollText className="h-5 w-5 text-brand" /> Recent 500 events</CardTitle>
-          <CardDescription>{can(user, 'audit:export') ? 'Export available - coming soon.' : 'Read-only.'}</CardDescription>
+          <CardTitle className="flex items-center gap-2">
+            <ScrollText className="h-5 w-5 text-brand" /> Recent 500 events
+          </CardTitle>
+          <CardDescription>
+            {can(user, 'audit:export') ? 'Export available - coming soon.' : 'Read-only.'}
+          </CardDescription>
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
@@ -72,13 +76,19 @@ export default async function AuditPage() {
                       </td>
                       <td className="px-4 py-3 text-xs">
                         {l.ipAddress ? (
-                          <span className="inline-flex items-center gap-1"><Globe className="h-3 w-3 text-fg-muted" /> {l.ipAddress}</span>
+                          <span className="inline-flex items-center gap-1">
+                            <Globe className="h-3 w-3 text-fg-muted" /> {l.ipAddress}
+                          </span>
                         ) : (
                           <span className="text-fg-muted">-</span>
                         )}
                       </td>
                       <td className="max-w-xs px-4 py-3 text-[11px] text-fg-muted">
-                        {l.details ? <code className="line-clamp-3 whitespace-pre-wrap break-words">{l.details}</code> : '-'}
+                        {l.details ? (
+                          <code className="line-clamp-3 whitespace-pre-wrap break-words">{l.details}</code>
+                        ) : (
+                          '-'
+                        )}
                       </td>
                     </tr>
                   );
@@ -96,7 +106,9 @@ function Stat({ label, value, tone }: { label: string; value: number; tone?: 'wa
   return (
     <div className="rounded-xl border border-border bg-card p-4">
       <div className="text-xs font-semibold uppercase tracking-widest text-fg-muted">{label}</div>
-      <div className={`mt-1 text-display-md font-bold tabular ${tone === 'warning' ? 'text-amber-500' : 'text-fg'}`}>{value}</div>
+      <div className={`tabular mt-1 text-display-md font-bold ${tone === 'warning' ? 'text-amber-500' : 'text-fg'}`}>
+        {value}
+      </div>
     </div>
   );
 }

@@ -23,7 +23,7 @@
     --overlay: 222 47% 11%;
 
     /* Brand */
-    --brand: 350 56% 27%;            /* maroon 700 */
+    --brand: 350 56% 27%; /* maroon 700 */
     --brand-fg: 40 44% 95%;
     --brand-soft: 350 56% 95%;
 
@@ -115,21 +115,34 @@
 /* =========================================================================
    Base layer
    ========================================================================= */
-* { border-color: hsl(var(--border)); }
-html { -webkit-tap-highlight-color: transparent; }
-html, body { background: hsl(var(--bg)); color: hsl(var(--fg)); }
+* {
+  border-color: hsl(var(--border));
+}
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+html,
 body {
-  font-feature-settings: "cv02","cv03","cv04","cv11","ss01";
+  background: hsl(var(--bg));
+  color: hsl(var(--fg));
+}
+body {
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'ss01';
   font-variant-numeric: tabular-nums;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-::selection { background: hsl(var(--brand) / 0.2); color: hsl(var(--fg)); }
+::selection {
+  background: hsl(var(--brand) / 0.2);
+  color: hsl(var(--fg));
+}
 
 /* Tabular numerals for data tables and scores */
-.tabular { font-variant-numeric: tabular-nums; }
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
 
 /* =========================================================================
    Components
@@ -148,9 +161,17 @@ body {
   background: linear-gradient(135deg, hsl(350 56% 27%) 0%, hsl(350 56% 45%) 60%, hsl(350 56% 55%) 100%);
 }
 
-.scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
-.scrollbar-thin::-webkit-scrollbar-thumb { background: hsl(var(--border-strong)); border-radius: 3px; }
-.scrollbar-thin::-webkit-scrollbar-thumb:hover { background: hsl(var(--fg-muted)); }
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: hsl(var(--border-strong));
+  border-radius: 3px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--fg-muted));
+}
 
 /* Focus ring helper */
 .focus-ring {
@@ -168,13 +189,38 @@ body {
   animation: skeleton 1.4s linear infinite;
   border-radius: var(--radius-sm);
 }
-@keyframes skeleton { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+@keyframes skeleton {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
 
 /* Page transitions (used by framer-motion fallback) */
-.fade-in { animation: fadeIn 200ms var(--ease-out) both; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.fade-in {
+  animation: fadeIn 200ms var(--ease-out) both;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 /* Reduced motion respect */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

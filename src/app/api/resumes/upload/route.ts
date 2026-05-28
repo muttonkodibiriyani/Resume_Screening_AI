@@ -38,13 +38,16 @@ interface ProgressEvent {
   error?: string;
 }
 
-async function validateFile(file: File): Promise<{ ok: true; buffer: Buffer; ext: string } | { ok: false; reason: string }> {
+async function validateFile(
+  file: File,
+): Promise<{ ok: true; buffer: Buffer; ext: string } | { ok: false; reason: string }> {
   if (file.size > FILE_LIMITS.maxBytesPerFile) {
     return { ok: false, reason: `File exceeds ${FILE_LIMITS.maxBytesPerFile / 1024 / 1024} MB limit` };
   }
   const buffer = Buffer.from(await file.arrayBuffer());
 
-  const ext = ('.' + (file.name.split('.').pop() || '').toLowerCase()) as (typeof FILE_LIMITS.allowedExtensions)[number];
+  const ext = ('.' +
+    (file.name.split('.').pop() || '').toLowerCase()) as (typeof FILE_LIMITS.allowedExtensions)[number];
   if (!FILE_LIMITS.allowedExtensions.includes(ext)) {
     return { ok: false, reason: `Extension ${ext} not allowed (allowed: ${FILE_LIMITS.allowedExtensions.join(', ')})` };
   }
@@ -146,7 +149,12 @@ export const POST = apiHandler(async (req: NextRequest) => {
 
             // Persist original file
             const sha = createHash('sha256').update(buffer).digest('hex').slice(0, 16);
-            const storage = await saveResume({ buffer, fileName: file.name, contentType: file.type || 'application/octet-stream', sha });
+            const storage = await saveResume({
+              buffer,
+              fileName: file.name,
+              contentType: file.type || 'application/octet-stream',
+              sha,
+            });
 
             send(controller, {
               type: 'extracted',
@@ -230,7 +238,13 @@ export const POST = apiHandler(async (req: NextRequest) => {
               action: 'AI_SCORED',
               entityType: 'Candidate',
               entityId: created.id,
-              details: { engine: scoring.engine, model: scoring.modelUsed, score: scoring.result.overallScore, band: scoring.result.scoreBand, errorKind: scoring.errorKind },
+              details: {
+                engine: scoring.engine,
+                model: scoring.modelUsed,
+                score: scoring.result.overallScore,
+                band: scoring.result.scoreBand,
+                errorKind: scoring.errorKind,
+              },
               ipAddress: ip,
             });
 

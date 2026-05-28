@@ -3,9 +3,23 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import {
-  LayoutDashboard, Sparkles, Library, Upload, Trophy, Users, FileBarChart,
-  ScrollText, Settings, LogOut, ShieldCheck, Menu, Command as CmdIcon, BarChart3,
-  PanelLeftClose, PanelLeftOpen, ChevronRight,
+  LayoutDashboard,
+  Sparkles,
+  Library,
+  Upload,
+  Trophy,
+  Users,
+  FileBarChart,
+  ScrollText,
+  Settings,
+  LogOut,
+  ShieldCheck,
+  Menu,
+  Command as CmdIcon,
+  BarChart3,
+  PanelLeftClose,
+  PanelLeftOpen,
+  ChevronRight,
 } from 'lucide-react';
 import { cn, initials, roleLabelClient } from '@/lib/utils';
 import { ThemeToggle } from './theme-toggle';
@@ -13,8 +27,12 @@ import { CommandPalette } from './command-palette';
 import { Button } from './ui/button';
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from './ui/sheet';
 import {
-  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem,
-  DropdownMenuLabel, DropdownMenuSeparator,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
 } from './ui/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
@@ -71,7 +89,7 @@ export function AppShell({ children, user }: AppShellProps) {
 
   const NavBody = ({ collapsed: c = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) => (
     <TooltipProvider delayDuration={150}>
-      <nav className="flex-1 space-y-4 overflow-y-auto px-2 py-3 scrollbar-thin" aria-label="Primary">
+      <nav className="scrollbar-thin flex-1 space-y-4 overflow-y-auto px-2 py-3" aria-label="Primary">
         {NAV.map((group) => (
           <div key={group.group} className="space-y-0.5">
             {!c && (
@@ -81,8 +99,7 @@ export function AppShell({ children, user }: AppShellProps) {
             )}
             {group.items.map((item) => {
               const Icon = item.icon;
-              const active =
-                pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href));
+              const active = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href));
               const inner = (
                 <Link
                   href={item.href}
@@ -90,9 +107,7 @@ export function AppShell({ children, user }: AppShellProps) {
                   aria-current={active ? 'page' : undefined}
                   className={cn(
                     'group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all',
-                    active
-                      ? 'bg-brand text-brand-foreground shadow-sm'
-                      : 'text-fg hover:bg-bg-muted',
+                    active ? 'bg-brand text-brand-foreground shadow-sm' : 'text-fg hover:bg-bg-muted',
                     c && 'justify-center px-2',
                   )}
                 >
@@ -190,16 +205,15 @@ export function AppShell({ children, user }: AppShellProps) {
             </Sheet>
 
             <nav aria-label="Breadcrumb" className="hidden min-w-0 items-center gap-1 text-sm text-fg-muted md:flex">
-              <Link href="/dashboard" className="hover:text-fg">Home</Link>
+              <Link href="/dashboard" className="hover:text-fg">
+                Home
+              </Link>
               {breadcrumbs.slice(0, 3).map((b, i) => (
                 <span key={b.href} className="flex items-center gap-1">
                   <ChevronRight className="h-3 w-3" />
                   <Link
                     href={b.href}
-                    className={cn(
-                      'capitalize',
-                      i === breadcrumbs.length - 1 ? 'font-medium text-fg' : 'hover:text-fg',
-                    )}
+                    className={cn('capitalize', i === breadcrumbs.length - 1 ? 'font-medium text-fg' : 'hover:text-fg')}
                   >
                     {b.label}
                   </Link>

@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -70,6 +70,7 @@ jobs:
       DATABASE_PROVIDER: sqlite
       DATABASE_URL: file:./prisma/test.db
       AUTH_SECRET: ci-secret-32chars-min-1234567890abcd
+      AUTH_PROVIDER: local
       STORAGE_PROVIDER: local
       QUEUE_PROVIDER: memory
       NEXT_TELEMETRY_DISABLED: 1
@@ -80,9 +81,14 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - run: npx prisma generate
       - run: npx prisma db push --skip-generate
-      - run: npx playwright install --with-deps chromium
-      - run: npm run build
-      - run: npm run test:e2e --if-present
+      - name: Seed demo users
+        run: npm run db:seed
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+      # Playwright config's webServer starts `npm run dev` (NODE_ENV=development)
+      # so the session cookie doesn't require the `__Host-` HTTPS prefix.
+      - name: Run Playwright tests
+        run: npm run test:e2e
       - if: failure()
         uses: actions/upload-artifact@v4
         with:

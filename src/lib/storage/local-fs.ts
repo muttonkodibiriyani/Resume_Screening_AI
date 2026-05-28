@@ -37,10 +37,13 @@ export class LocalFsStorage implements StorageDriver {
       const buffer = await fs.readFile(abs);
       const ext = path.extname(rel).toLowerCase();
       const contentType =
-        ext === '.pdf' ? 'application/pdf'
-        : ext === '.docx' ? 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-        : ext === '.txt' ? 'text/plain'
-        : 'application/octet-stream';
+        ext === '.pdf'
+          ? 'application/pdf'
+          : ext === '.docx'
+            ? 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+            : ext === '.txt'
+              ? 'text/plain'
+              : 'application/octet-stream';
       return { buffer, contentType };
     } catch {
       return null;

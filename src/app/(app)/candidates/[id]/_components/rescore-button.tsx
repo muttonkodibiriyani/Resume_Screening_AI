@@ -16,8 +16,14 @@ export function RescoreButton({ candidateId }: { candidateId: string }) {
       onClick={async () => {
         setBusy(true);
         try {
-          const r = await apiFetch<{ engine: string; modelUsed?: string }>(`/api/candidates/${candidateId}/rescore`, { method: 'POST' });
-          toast({ title: 'Re-scored', description: `Engine: ${r.engine}${r.modelUsed ? ` (${r.modelUsed})` : ''}`, variant: 'success' });
+          const r = await apiFetch<{ engine: string; modelUsed?: string }>(`/api/candidates/${candidateId}/rescore`, {
+            method: 'POST',
+          });
+          toast({
+            title: 'Re-scored',
+            description: `Engine: ${r.engine}${r.modelUsed ? ` (${r.modelUsed})` : ''}`,
+            variant: 'success',
+          });
           router.refresh();
         } catch (e) {
           const message = e instanceof ApiError ? e.message : String(e);

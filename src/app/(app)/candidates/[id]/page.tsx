@@ -76,7 +76,9 @@ export default async function CandidatePage({ params }: PageProps) {
         <div className="flex gap-2">
           {candidate.filePath && (
             <Button asChild variant="outline" className="gap-2">
-              <a href={`/api/candidates/${candidate.id}/resume`}><Download className="h-4 w-4" /> Original resume</a>
+              <a href={`/api/candidates/${candidate.id}/resume`}>
+                <Download className="h-4 w-4" /> Original resume
+              </a>
             </Button>
           )}
           <RescoreButton candidateId={candidate.id} />
@@ -109,12 +111,28 @@ export default async function CandidatePage({ params }: PageProps) {
             </dl>
 
             <div className="flex flex-wrap gap-1.5">
-              <Badge variant={candidate.extractionStatus === 'success' ? 'success' : candidate.extractionStatus === 'partial' ? 'warning' : 'danger'}>
+              <Badge
+                variant={
+                  candidate.extractionStatus === 'success'
+                    ? 'success'
+                    : candidate.extractionStatus === 'partial'
+                      ? 'warning'
+                      : 'danger'
+                }
+              >
                 {candidate.extractionStatus}
               </Badge>
               {score && <EngineBadge engine={score.aiEngine} />}
               {decision && (
-                <Badge variant={decision.decision === 'shortlist' ? 'success' : decision.decision === 'reject' ? 'danger' : 'warning'}>
+                <Badge
+                  variant={
+                    decision.decision === 'shortlist'
+                      ? 'success'
+                      : decision.decision === 'reject'
+                        ? 'danger'
+                        : 'warning'
+                  }
+                >
                   {decision.decision}
                 </Badge>
               )}
@@ -153,15 +171,23 @@ export default async function CandidatePage({ params }: PageProps) {
         <Card className="lg:col-span-1">
           <CardHeader>
             <CardTitle>Score</CardTitle>
-            <CardDescription>
-              Weighted breakdown across {dims.length} rubric dimensions.
-            </CardDescription>
+            <CardDescription>Weighted breakdown across {dims.length} rubric dimensions.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {score ? <ScoreRadial dims={dims} overall={score.overallScore} /> : <NoScore />}
             {sb && (
               <div className="text-center">
-                <Badge variant={sb.color === 'emerald' ? 'success' : sb.color === 'blue' ? 'info' : sb.color === 'amber' ? 'warning' : 'danger'}>
+                <Badge
+                  variant={
+                    sb.color === 'emerald'
+                      ? 'success'
+                      : sb.color === 'blue'
+                        ? 'info'
+                        : sb.color === 'amber'
+                          ? 'warning'
+                          : 'danger'
+                  }
+                >
                   {sb.label}
                 </Badge>
               </div>
@@ -170,7 +196,9 @@ export default async function CandidatePage({ params }: PageProps) {
               {dims.map((d) => (
                 <div key={d.key} className="flex items-center justify-between rounded-md border border-border p-2">
                   <span className="text-fg-muted">{d.label}</span>
-                  <span className="font-semibold tabular">{d.value}/{d.weight}</span>
+                  <span className="tabular font-semibold">
+                    {d.value}/{d.weight}
+                  </span>
                 </div>
               ))}
             </div>
@@ -184,7 +212,11 @@ export default async function CandidatePage({ params }: PageProps) {
             <CardDescription>Recruiter / hiring manager call. Audited.</CardDescription>
           </CardHeader>
           <CardContent>
-            <DecisionForm candidateId={candidate.id} initial={decision?.decision} initialComments={decision?.comments || ''} />
+            <DecisionForm
+              candidateId={candidate.id}
+              initial={decision?.decision}
+              initialComments={decision?.comments || ''}
+            />
             {decision && (
               <div className="mt-4 flex items-center gap-2 text-[11px] text-fg-muted">
                 <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
@@ -209,7 +241,12 @@ export default async function CandidatePage({ params }: PageProps) {
         <TabsContent value="skills">
           <Card>
             <CardContent className="grid gap-4 p-6 md:grid-cols-3">
-              <SkillsList title={`Matched (${matched.length})`} variant="success" items={matched} evidence={matchedEv} />
+              <SkillsList
+                title={`Matched (${matched.length})`}
+                variant="success"
+                items={matched}
+                evidence={matchedEv}
+              />
               <SkillsList title={`Partial (${partial.length})`} variant="warning" items={partial} />
               <SkillsList title={`Missing (${missing.length})`} variant="danger" items={missing} evidence={missingEv} />
             </CardContent>
@@ -250,7 +287,7 @@ export default async function CandidatePage({ params }: PageProps) {
                 <ol className="space-y-2 text-sm">
                   {questions.map((q, i) => (
                     <li key={i} className="rounded-md border border-border p-3">
-                      <span className="mr-2 font-bold tabular text-fg-muted">{String(i + 1).padStart(2, '0')}.</span>
+                      <span className="tabular mr-2 font-bold text-fg-muted">{String(i + 1).padStart(2, '0')}.</span>
                       {q}
                     </li>
                   ))}
@@ -315,7 +352,17 @@ function NoScore() {
   );
 }
 
-function SkillsList({ title, variant, items, evidence }: { title: string; variant: 'success' | 'warning' | 'danger'; items: string[]; evidence?: string[] }) {
+function SkillsList({
+  title,
+  variant,
+  items,
+  evidence,
+}: {
+  title: string;
+  variant: 'success' | 'warning' | 'danger';
+  items: string[];
+  evidence?: string[];
+}) {
   return (
     <div>
       <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-fg-muted">{title}</h4>

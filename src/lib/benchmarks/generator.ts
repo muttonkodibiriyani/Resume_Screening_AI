@@ -106,18 +106,23 @@ Hiring notes: ${input.hiringNotes || 'None'}
     try {
       const query = `${input.roleTitle} ${input.skillFamily || ''} ideal candidate skills certifications red flags 2026`;
       const sources = await searchWeb(query, 6);
-      const sourceText = sources.length > 0
-        ? '\nOnline research snippets:\n' + sources.map((s, i) => `[${i + 1}] ${s.title} (${s.url}): ${s.snippet}`).join('\n')
-        : '\nOnline research returned no results.';
+      const sourceText =
+        sources.length > 0
+          ? '\nOnline research snippets:\n' +
+            sources.map((s, i) => `[${i + 1}] ${s.title} (${s.url}): ${s.snippet}`).join('\n')
+          : '\nOnline research returned no results.';
       const fullPrompt = `${BENCHMARK_SYSTEM_PROMPT}\n\n${userPrompt}${sourceText}\n\nReturn JSON only.`;
-      const { text: raw } = preferred === 'gemini+search'
-        ? await callGemini(fullPrompt, { maxTokens: 6000 })
-        : await callAzureOpenAI(fullPrompt, { maxTokens: 4000 });
+      const { text: raw } =
+        preferred === 'gemini+search'
+          ? await callGemini(fullPrompt, { maxTokens: 6000 })
+          : await callAzureOpenAI(fullPrompt, { maxTokens: 4000 });
       const parsed = parseAIJson<Record<string, unknown>>(raw);
       if (parsed) {
         return {
           benchmark: normalizeBenchmark(parsed, input, preferred, 'ai-research', sources),
-          engineUsed: preferred, benchmarkSource: 'ai-research', sources,
+          engineUsed: preferred,
+          benchmarkSource: 'ai-research',
+          sources,
         };
       }
     } catch {
@@ -129,14 +134,17 @@ Hiring notes: ${input.hiringNotes || 'None'}
   if (preferred === 'gemini' || preferred === 'azure-openai') {
     try {
       const fullPrompt = `${BENCHMARK_SYSTEM_PROMPT}\n\n${userPrompt}\n(No online search results available - use AI reasoning + internal framework.)\n\nReturn JSON only.`;
-      const { text: raw } = preferred === 'gemini'
-        ? await callGemini(fullPrompt, { maxTokens: 6000 })
-        : await callAzureOpenAI(fullPrompt, { maxTokens: 4000 });
+      const { text: raw } =
+        preferred === 'gemini'
+          ? await callGemini(fullPrompt, { maxTokens: 6000 })
+          : await callAzureOpenAI(fullPrompt, { maxTokens: 4000 });
       const parsed = parseAIJson<Record<string, unknown>>(raw);
       if (parsed) {
         return {
           benchmark: normalizeBenchmark(parsed, input, preferred, 'ai-only', []),
-          engineUsed: preferred, benchmarkSource: 'ai-only', sources: [],
+          engineUsed: preferred,
+          benchmarkSource: 'ai-only',
+          sources: [],
         };
       }
     } catch {

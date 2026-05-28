@@ -7,8 +7,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-  Sparkles, Upload, Trophy, Users, FileBarChart, AlertCircle, CheckCircle2,
-  ShieldCheck, Cpu, Activity, Clock, ArrowUpRight,
+  Sparkles,
+  Upload,
+  Trophy,
+  Users,
+  FileBarChart,
+  AlertCircle,
+  CheckCircle2,
+  ShieldCheck,
+  Cpu,
+  Activity,
+  Clock,
+  ArrowUpRight,
 } from 'lucide-react';
 import { formatRelativeTime, scoreBand } from '@/lib/utils';
 
@@ -17,7 +27,11 @@ export const dynamic = 'force-dynamic';
 export default async function DashboardPage() {
   const user = await requireAuth();
   const ai = getAIEngineStatus();
-  const geminiProbe = ai.geminiConfigured ? await probeGeminiModel().catch(() => ({ ok: false, error: 'probe failed' })) : null;
+  const geminiProbe: Awaited<ReturnType<typeof probeGeminiModel>> | null = ai.geminiConfigured
+    ? await probeGeminiModel().catch(
+        () => ({ ok: false, error: 'probe failed' }) as Awaited<ReturnType<typeof probeGeminiModel>>,
+      )
+    : null;
 
   const [benchmarks, candidates, scoredCount, pending, shortlisted, recent, recentAudits] = await Promise.all([
     prisma.benchmark.count(),
@@ -53,19 +67,21 @@ export default async function DashboardPage() {
       <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-widest text-fg-muted">Welcome back</p>
-          <h1 className="text-display-sm font-semibold tracking-tight">
-            Hello, {user.name.split(' ')[0]}
-          </h1>
+          <h1 className="text-display-sm font-semibold tracking-tight">Hello, {user.name.split(' ')[0]}</h1>
           <p className="mt-1 text-sm text-fg-muted">
             Here is what is happening across your recruitment pipeline today.
           </p>
         </div>
         <div className="flex gap-2">
           <Button asChild variant="outline" className="gap-2">
-            <Link href="/benchmark/ai-research"><Sparkles className="h-4 w-4" /> AI research</Link>
+            <Link href="/benchmark/ai-research">
+              <Sparkles className="h-4 w-4" /> AI research
+            </Link>
           </Button>
           <Button asChild className="gap-2">
-            <Link href="/upload"><Upload className="h-4 w-4" /> Upload resumes</Link>
+            <Link href="/upload">
+              <Upload className="h-4 w-4" /> Upload resumes
+            </Link>
           </Button>
         </div>
       </header>
@@ -74,7 +90,9 @@ export default async function DashboardPage() {
       <Card aria-live="polite">
         <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-3">
-            <div className={`flex h-10 w-10 items-center justify-center rounded-full ${geminiOk ? 'bg-emerald-500/10 text-emerald-500' : ai.geminiConfigured ? 'bg-amber-500/10 text-amber-500' : 'bg-slate-500/10 text-slate-500'}`}>
+            <div
+              className={`flex h-10 w-10 items-center justify-center rounded-full ${geminiOk ? 'bg-emerald-500/10 text-emerald-500' : ai.geminiConfigured ? 'bg-amber-500/10 text-amber-500' : 'bg-slate-500/10 text-slate-500'}`}
+            >
               <Cpu className="h-5 w-5" />
             </div>
             <div>
@@ -92,7 +110,9 @@ export default async function DashboardPage() {
             <Badge variant={ai.geminiConfigured ? (geminiOk ? 'success' : 'warning') : 'slate'}>
               Gemini {ai.geminiConfigured ? (geminiOk ? 'online' : 'failing') : 'off'}
             </Badge>
-            <Badge variant={ai.azureOpenAIConfigured ? 'indigo' : 'slate'}>Azure OpenAI {ai.azureOpenAIConfigured ? 'on' : 'off'}</Badge>
+            <Badge variant={ai.azureOpenAIConfigured ? 'indigo' : 'slate'}>
+              Azure OpenAI {ai.azureOpenAIConfigured ? 'on' : 'off'}
+            </Badge>
             <Badge variant={ai.searchConfigured ? 'info' : 'slate'}>Tavily {ai.searchConfigured ? 'on' : 'off'}</Badge>
             <Badge variant={ai.ocrConfigured ? 'success' : 'slate'}>OCR {ai.ocrConfigured ? 'on' : 'off'}</Badge>
             <Badge variant="purple">{engineToLabel(ai.preferredEngine)}</Badge>
@@ -113,7 +133,7 @@ export default async function DashboardPage() {
               <k.icon className="h-4 w-4 text-fg-muted transition-colors group-hover:text-fg" />
             </div>
             <div className="mt-2 flex items-end justify-between">
-              <div className="text-display-md font-bold tabular text-fg">{k.value}</div>
+              <div className="tabular text-display-md font-bold text-fg">{k.value}</div>
               <ArrowUpRight className="h-4 w-4 -translate-x-1 translate-y-1 text-fg-muted opacity-0 transition-all group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100" />
             </div>
           </Link>
@@ -139,13 +159,25 @@ export default async function DashboardPage() {
                 >
                   <div className="min-w-0">
                     <div className="truncate text-sm font-medium text-fg">{c.candidateName || c.fileName}</div>
-                    <div className="truncate text-xs text-fg-muted">{c.benchmark.roleTitle} - {formatRelativeTime(c.uploadedAt)}</div>
+                    <div className="truncate text-xs text-fg-muted">
+                      {c.benchmark.roleTitle} - {formatRelativeTime(c.uploadedAt)}
+                    </div>
                   </div>
                   <div className="ml-3 flex items-center gap-2">
                     {c.score ? (
                       <>
-                        <span className="text-lg font-bold tabular text-fg">{c.score.overallScore}</span>
-                        <Badge variant={sb?.color === 'emerald' ? 'success' : sb?.color === 'blue' ? 'info' : sb?.color === 'amber' ? 'warning' : 'danger'}>
+                        <span className="tabular text-lg font-bold text-fg">{c.score.overallScore}</span>
+                        <Badge
+                          variant={
+                            sb?.color === 'emerald'
+                              ? 'success'
+                              : sb?.color === 'blue'
+                                ? 'info'
+                                : sb?.color === 'amber'
+                                  ? 'warning'
+                                  : 'danger'
+                          }
+                        >
                           {sb?.short}
                         </Badge>
                       </>
@@ -193,7 +225,9 @@ export default async function DashboardPage() {
 
 function EmptyState({ compact }: { compact?: boolean }) {
   return (
-    <div className={`flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border p-${compact ? 4 : 8} text-center`}>
+    <div
+      className={`flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border p-${compact ? 4 : 8} text-center`}
+    >
       <AlertCircle className="h-5 w-5 text-fg-muted" />
       <div className="text-sm text-fg-muted">Nothing here yet.</div>
     </div>

@@ -126,7 +126,8 @@ export async function scoreCandidate(opts: ScoreCandidateInput): Promise<Scoring
   // Hard guard: refuse to confidently score if extraction was insufficient
   if (!resumeText || resumeText.length < 200) {
     const fallback = scoreWithRules({ resumeText: resumeText || '', candidateName, benchmark });
-    fallback.finalSummary = `INSUFFICIENT EXTRACTION (${resumeText?.length || 0} chars). Cannot score confidently. ` + fallback.finalSummary;
+    fallback.finalSummary =
+      `INSUFFICIENT EXTRACTION (${resumeText?.length || 0} chars). Cannot score confidently. ` + fallback.finalSummary;
     fallback.risk = 'high';
     fallback.redFlagsDetected.unshift('Insufficient resume text extracted - scoring is not reliable');
     return {
@@ -149,7 +150,13 @@ export async function scoreCandidate(opts: ScoreCandidateInput): Promise<Scoring
       const parsed = parseAIJson<Record<string, unknown>>(raw);
       if (parsed && typeof parsed.overallScore === 'number') {
         const normalized = normalizeAIScore(parsed, benchmark, candidateName);
-        return { result: normalized, engine, modelUsed: model, rawResponse: raw, promptVersion: SCORING_PROMPT_VERSION };
+        return {
+          result: normalized,
+          engine,
+          modelUsed: model,
+          rawResponse: raw,
+          promptVersion: SCORING_PROMPT_VERSION,
+        };
       }
       const fb = scoreWithRules({ resumeText, candidateName, benchmark });
       fb.finalSummary = `[AI returned invalid JSON - fell back to rule engine] ` + fb.finalSummary;
@@ -164,10 +171,13 @@ export async function scoreCandidate(opts: ScoreCandidateInput): Promise<Scoring
         promptVersion: SCORING_PROMPT_VERSION,
       };
     } catch (err) {
-      const aiErr: AIError = err instanceof AIError ? err : classifyError(engine === 'gemini' ? 'gemini' : 'azure-openai', err);
+      const aiErr: AIError =
+        err instanceof AIError ? err : classifyError(engine === 'gemini' ? 'gemini' : 'azure-openai', err);
       const fb = scoreWithRules({ resumeText, candidateName, benchmark });
       const hint = aiErr.hint ? ` Hint: ${aiErr.hint}` : '';
-      fb.finalSummary = `[AI call failed (${aiErr.kind}): ${aiErr.message.slice(0, 240)}${hint} - fell back to rule engine] ` + fb.finalSummary;
+      fb.finalSummary =
+        `[AI call failed (${aiErr.kind}): ${aiErr.message.slice(0, 240)}${hint} - fell back to rule engine] ` +
+        fb.finalSummary;
       logger.error('AI call failed, falling back to rule engine', {
         engine,
         kind: aiErr.kind,
@@ -199,8 +209,14 @@ export function normalizeAIScore(
   candidateName: string | null,
 ): CandidateScore {
   const weights = (benchmark.weights as Record<string, number>) || {
-    years: 10, primarySkillDepth: 25, architectureArtifacts: 20, projectFootprint: 15,
-    leadership: 10, modernization: 10, certifications: 5, communication: 5,
+    years: 10,
+    primarySkillDepth: 25,
+    architectureArtifacts: 20,
+    projectFootprint: 15,
+    leadership: 10,
+    modernization: 10,
+    certifications: 5,
+    communication: 5,
   };
 
   const b = (ai.breakdown as Record<string, number>) || {};
@@ -229,9 +245,10 @@ export function normalizeAIScore(
     else band = 'reject';
   }
 
-  const arrayOr = <T,>(v: unknown, fallback: T[]): T[] => (Array.isArray(v) ? (v as T[]) : fallback);
+  const arrayOr = <T>(v: unknown, fallback: T[]): T[] => (Array.isArray(v) ? (v as T[]) : fallback);
   const riskRaw = ai.risk;
-  const risk: CandidateScore['risk'] = riskRaw === 'low' || riskRaw === 'medium' || riskRaw === 'high' ? riskRaw : 'medium';
+  const risk: CandidateScore['risk'] =
+    riskRaw === 'low' || riskRaw === 'medium' || riskRaw === 'high' ? riskRaw : 'medium';
 
   return {
     candidateName: String(ai.candidateName || candidateName || 'Unknown Candidate'),

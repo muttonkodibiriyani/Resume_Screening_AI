@@ -30,11 +30,58 @@ export interface RuleScoringInput {
   };
 }
 
-const ARCH_KEYWORDS = ['architect', 'designed', 'hld', 'lld', 'high-level design', 'low-level design', 'reference architecture', 'governance', 'pattern', 'blueprint'];
+const ARCH_KEYWORDS = [
+  'architect',
+  'designed',
+  'hld',
+  'lld',
+  'high-level design',
+  'low-level design',
+  'reference architecture',
+  'governance',
+  'pattern',
+  'blueprint',
+];
 const LEADERSHIP_KEYWORDS = ['led', 'leading', 'managed', 'mentored', 'team of', 'reports', 'stakeholder'];
-const DELIVERY_KEYWORDS = ['production', 'go-live', 'go live', 'rolled out', 'rollout', 'delivered', 'migrated', 'launched', 'enterprise scale', 'global rollout'];
-const MODERN_KEYWORDS = ['cloud', 'azure', 'aws', 'gcp', 'ci/cd', 'devops', 'kubernetes', 'docker', 'terraform', 'bicep', 'iac', 'genai', 'llm', 'rag', 'github actions'];
-const CERT_KEYWORDS = ['certified', 'certification', 'aws certified', 'azure certified', 'oracle certified', 'az-', 'oca', 'ocp'];
+const DELIVERY_KEYWORDS = [
+  'production',
+  'go-live',
+  'go live',
+  'rolled out',
+  'rollout',
+  'delivered',
+  'migrated',
+  'launched',
+  'enterprise scale',
+  'global rollout',
+];
+const MODERN_KEYWORDS = [
+  'cloud',
+  'azure',
+  'aws',
+  'gcp',
+  'ci/cd',
+  'devops',
+  'kubernetes',
+  'docker',
+  'terraform',
+  'bicep',
+  'iac',
+  'genai',
+  'llm',
+  'rag',
+  'github actions',
+];
+const CERT_KEYWORDS = [
+  'certified',
+  'certification',
+  'aws certified',
+  'azure certified',
+  'oracle certified',
+  'az-',
+  'oca',
+  'ocp',
+];
 const JD_VAGUE_KEYWORDS = ['responsible for', 'involved in', 'worked on', 'participated in'];
 
 const MONTHS = '(?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*';
@@ -139,8 +186,14 @@ export function scoreWithRules(input: RuleScoringInput): CandidateScore {
   const minExp = benchmark.minExperience || 5;
 
   const W: Record<string, number> = benchmark.weights || {
-    years: 10, primarySkillDepth: 25, architectureArtifacts: 20, projectFootprint: 15,
-    leadership: 10, modernization: 10, certifications: 5, communication: 5,
+    years: 10,
+    primarySkillDepth: 25,
+    architectureArtifacts: 20,
+    projectFootprint: 15,
+    leadership: 10,
+    modernization: 10,
+    certifications: 5,
+    communication: 5,
   };
 
   const yearsScore = Math.round((Math.min(totalYears, minExp + 5) / (minExp + 5)) * (W.years ?? 10));
@@ -182,7 +235,10 @@ export function scoreWithRules(input: RuleScoringInput): CandidateScore {
     communication: commScore,
   };
 
-  const overall = Math.min(100, Object.values(breakdown).reduce((a, b) => a + b, 0));
+  const overall = Math.min(
+    100,
+    Object.values(breakdown).reduce((a, b) => a + b, 0),
+  );
 
   const redFlags: string[] = [];
   if (textLower.includes('architect') && archHits < 2) {
@@ -222,7 +278,8 @@ export function scoreWithRules(input: RuleScoringInput): CandidateScore {
   }
 
   const strengths: string[] = [];
-  if (skillMatchRatio > 0.7) strengths.push(`Strong skill match (${matched.length}/${allSkills.length} primary/mandatory skills evidenced)`);
+  if (skillMatchRatio > 0.7)
+    strengths.push(`Strong skill match (${matched.length}/${allSkills.length} primary/mandatory skills evidenced)`);
   if (archHits >= 3) strengths.push('Clear architecture/design ownership evidence');
   if (leadHits >= 3) strengths.push('Demonstrated leadership and team management');
   if (modernHits >= 3) strengths.push('Cloud/DevOps/Modern stack fluency');
@@ -231,11 +288,15 @@ export function scoreWithRules(input: RuleScoringInput): CandidateScore {
 
   const gaps: string[] = [];
   if (missing.length > 0) {
-    gaps.push(`Missing skills: ${missing.slice(0, 5).join(', ')}${missing.length > 5 ? ` (+${missing.length - 5} more)` : ''}`);
+    gaps.push(
+      `Missing skills: ${missing.slice(0, 5).join(', ')}${missing.length > 5 ? ` (+${missing.length - 5} more)` : ''}`,
+    );
   }
   if (totalYears < minExp) gaps.push(`Experience below benchmark (${totalYears} vs ${minExp}+ expected)`);
-  if (archHits < 2 && (benchmark.seniority || '').toLowerCase().includes('arch')) gaps.push('Limited architecture artifact evidence for an architect role');
-  if (leadHits < 2 && (benchmark.seniority || '').toLowerCase().includes('arch')) gaps.push('Limited leadership evidence for senior role');
+  if (archHits < 2 && (benchmark.seniority || '').toLowerCase().includes('arch'))
+    gaps.push('Limited architecture artifact evidence for an architect role');
+  if (leadHits < 2 && (benchmark.seniority || '').toLowerCase().includes('arch'))
+    gaps.push('Limited leadership evidence for senior role');
 
   const interviewFocusAreas = [
     'Validate skill claims with project-specific deep dives',

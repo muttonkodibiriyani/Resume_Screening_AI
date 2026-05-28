@@ -18,7 +18,10 @@ export interface ApiError {
   details?: unknown;
 }
 
-export type ApiHandler = (req: NextRequest, ctx: { params: Record<string, string> }) => Promise<NextResponse> | NextResponse;
+export type ApiHandler = (
+  req: NextRequest,
+  ctx: { params: Record<string, string> },
+) => Promise<NextResponse> | NextResponse;
 
 export function apiHandler(handler: ApiHandler): ApiHandler {
   return async (req, ctx) => {
@@ -36,16 +39,17 @@ export function apiHandler(handler: ApiHandler): ApiHandler {
       }
       if (err instanceof AIError) {
         return NextResponse.json<ApiError>(
-          { error: err.message, code: `AI_${err.kind.toUpperCase()}`, details: { provider: err.provider, hint: err.hint } },
+          {
+            error: err.message,
+            code: `AI_${err.kind.toUpperCase()}`,
+            details: { provider: err.provider, hint: err.hint },
+          },
           { status: err.status ?? 502 },
         );
       }
       const message = err instanceof Error ? err.message : String(err);
       logger.error('unhandled api error', { url: req.url, message });
-      return NextResponse.json<ApiError>(
-        { error: 'Internal server error', code: 'INTERNAL_ERROR' },
-        { status: 500 },
-      );
+      return NextResponse.json<ApiError>({ error: 'Internal server error', code: 'INTERNAL_ERROR' }, { status: 500 });
     }
   };
 }

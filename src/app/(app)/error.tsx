@@ -37,7 +37,9 @@ export default function AppError({ error, reset }: { error: Error & { digest?: s
               <RotateCcw className="h-4 w-4" /> Try again
             </Button>
             <Button asChild variant="outline" className="gap-2">
-              <Link href="/dashboard"><Home className="h-4 w-4" /> Dashboard</Link>
+              <Link href="/dashboard">
+                <Home className="h-4 w-4" /> Dashboard
+              </Link>
             </Button>
           </div>
         </CardContent>

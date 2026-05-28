@@ -18,7 +18,7 @@ export const DropdownMenuContent = React.forwardRef<
       sideOffset={sideOffset}
       className={cn(
         'z-50 min-w-[10rem] overflow-hidden rounded-lg border border-border bg-bg-elevated p-1 text-fg shadow-lg',
-        'data-[state=open]:animate-in data-[state=closed]:animate-out',
+        'data-[state=closed]:animate-out data-[state=open]:animate-in',
         className,
       )}
       {...props}
@@ -56,7 +56,11 @@ export const DropdownMenuLabel = React.forwardRef<
   React.ElementRef<typeof DropdownPrimitive.Label>,
   React.ComponentPropsWithoutRef<typeof DropdownPrimitive.Label>
 >(({ className, ...props }, ref) => (
-  <DropdownPrimitive.Label ref={ref} className={cn('px-2 py-1.5 text-xs font-semibold text-fg-muted', className)} {...props} />
+  <DropdownPrimitive.Label
+    ref={ref}
+    className={cn('px-2 py-1.5 text-xs font-semibold text-fg-muted', className)}
+    {...props}
+  />
 ));
 DropdownMenuLabel.displayName = DropdownPrimitive.Label.displayName;
 

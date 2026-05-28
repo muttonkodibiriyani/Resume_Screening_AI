@@ -1,30 +1,30 @@
 version: 2
 updates:
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "06:00"
-      timezone: "Asia/Dubai"
+      interval: 'weekly'
+      day: 'monday'
+      time: '06:00'
+      timezone: 'Asia/Dubai'
     open-pull-requests-limit: 10
     groups:
       next:
-        patterns: [ "next", "@next/*", "eslint-config-next" ]
+        patterns: ['next', '@next/*', 'eslint-config-next']
       radix:
-        patterns: [ "@radix-ui/*" ]
+        patterns: ['@radix-ui/*']
       testing:
-        patterns: [ "vitest", "@vitest/*", "@playwright/*", "@testing-library/*", "playwright" ]
-    labels: [ "dependencies", "automerge-candidate" ]
+        patterns: ['vitest', '@vitest/*', '@playwright/*', '@testing-library/*', 'playwright']
+    labels: ['dependencies', 'automerge-candidate']
 
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "weekly"
-    labels: [ "ci" ]
+      interval: 'weekly'
+    labels: ['ci']
 
-  - package-ecosystem: "docker"
-    directory: "/infra"
+  - package-ecosystem: 'docker'
+    directory: '/infra'
     schedule:
-      interval: "weekly"
-    labels: [ "docker", "infra" ]
+      interval: 'weekly'
+    labels: ['docker', 'infra']

@@ -19,10 +19,12 @@ export default async function ReportsPage() {
     <div className="mx-auto max-w-7xl space-y-6 px-4 py-8 sm:px-6 lg:px-8">
       <header className="space-y-2">
         <p className="text-xs font-semibold uppercase tracking-widest text-fg-muted">Reports</p>
-        <h1 className="text-display-sm flex items-center gap-2 font-semibold tracking-tight">
+        <h1 className="flex items-center gap-2 text-display-sm font-semibold tracking-tight">
           <FileBarChart className="h-7 w-7 text-brand" /> Exports
         </h1>
-        <p className="text-sm text-fg-muted">CSV, Excel, and PDF reports per benchmark. Ranking + top-3 + evidence + audit timestamp.</p>
+        <p className="text-sm text-fg-muted">
+          CSV, Excel, and PDF reports per benchmark. Ranking + top-3 + evidence + audit timestamp.
+        </p>
       </header>
 
       {benchmarks.length === 0 ? (
@@ -45,13 +47,19 @@ export default async function ReportsPage() {
                 </div>
                 <div className="grid grid-cols-3 gap-2">
                   <Button asChild variant="outline" size="sm" className="gap-1">
-                    <a href={`/api/reports/${b.id}?format=csv`}><FileText className="h-3 w-3" /> CSV</a>
+                    <a href={`/api/reports/${b.id}?format=csv`}>
+                      <FileText className="h-3 w-3" /> CSV
+                    </a>
                   </Button>
                   <Button asChild variant="outline" size="sm" className="gap-1">
-                    <a href={`/api/reports/${b.id}?format=xlsx`}><FileSpreadsheet className="h-3 w-3" /> Excel</a>
+                    <a href={`/api/reports/${b.id}?format=xlsx`}>
+                      <FileSpreadsheet className="h-3 w-3" /> Excel
+                    </a>
                   </Button>
                   <Button asChild size="sm" className="gap-1">
-                    <a href={`/api/reports/${b.id}?format=pdf`}><Download className="h-3 w-3" /> PDF</a>
+                    <a href={`/api/reports/${b.id}?format=pdf`}>
+                      <Download className="h-3 w-3" /> PDF
+                    </a>
                   </Button>
                 </div>
                 <p className="text-[11px] text-fg-muted">Updated {formatRelativeTime(b.updatedAt)}</p>

@@ -9,7 +9,15 @@
  * presence check only - keeps the edge fast.
  */
 import { NextResponse, type NextRequest } from 'next/server';
-import { randomBytes } from 'node:crypto';
+
+/** Edge-compatible random hex generator (Web Crypto, not node:crypto). */
+function randomHex(bytes: number): string {
+  const arr = new Uint8Array(bytes);
+  crypto.getRandomValues(arr);
+  let out = '';
+  for (let i = 0; i < arr.length; i++) out += arr[i]!.toString(16).padStart(2, '0');
+  return out;
+}
 
 const PUBLIC_PATHS = [
   '/login',
@@ -66,7 +74,7 @@ function securityHeaders(res: NextResponse): NextResponse {
 function ensureCsrfCookie(req: NextRequest, res: NextResponse): void {
   const existing = req.cookies.get('csrf-token')?.value;
   if (existing && existing.length === 64) return;
-  const token = randomBytes(32).toString('hex');
+  const token = randomHex(32);
   res.cookies.set('csrf-token', token, {
     httpOnly: false,
     sameSite: 'lax',
@@ -80,8 +88,7 @@ export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // Heuristic session presence check (real verification happens in route handlers / RSCs).
-  const cookieName =
-    process.env.NODE_ENV === 'production' ? '__Host-alshaya_session' : 'alshaya_session';
+  const cookieName = process.env.NODE_ENV === 'production' ? '__Host-alshaya_session' : 'alshaya_session';
   const hasSession = !!req.cookies.get(cookieName)?.value;
 
   // Block protected app pages: redirect to /login

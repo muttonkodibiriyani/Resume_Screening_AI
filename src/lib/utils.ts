@@ -7,7 +7,13 @@ export function cn(...inputs: ClassValue[]): string {
 
 export function formatDate(d: Date | string): string {
   const date = typeof d === 'string' ? new Date(d) : d;
-  return date.toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  return date.toLocaleString('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 }
 
 export function formatRelativeTime(d: Date | string): string {
@@ -51,7 +57,8 @@ export interface ScoreBandInfo {
 export function scoreBand(score: number): ScoreBandInfo {
   if (score >= 85) return { band: 'ideal', label: 'Ideal - Fast-track', color: 'emerald', short: 'Ideal' };
   if (score >= 70) return { band: 'strong', label: 'Strong - Interview', color: 'blue', short: 'Strong' };
-  if (score >= 55) return { band: 'borderline', label: 'Borderline - Screening Call', color: 'amber', short: 'Borderline' };
+  if (score >= 55)
+    return { band: 'borderline', label: 'Borderline - Screening Call', color: 'amber', short: 'Borderline' };
   return { band: 'reject', label: 'Below Benchmark - Reject', color: 'red', short: 'Reject' };
 }
 
@@ -64,10 +71,17 @@ export function initials(name: string | null | undefined): string {
 }
 
 export function slugify(s: string): string {
-  return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80);
+  return s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80);
 }
 
 /** Pretty-print a role id (admin -> Admin, hiring_manager -> Hiring Manager). */
 export function roleLabelClient(role: string): string {
-  return role.split('_').map((p) => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
+  return role
+    .split('_')
+    .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+    .join(' ');
 }

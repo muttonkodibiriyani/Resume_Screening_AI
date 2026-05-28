@@ -11,11 +11,18 @@ export default async function InsightsPage() {
   await requirePermission('audit:read');
 
   const [scores, candidates, decisions, benchmarks, aiCalls] = await Promise.all([
-    prisma.scoreResult.findMany({ select: { overallScore: true, scoreBand: true, aiEngine: true, errorMessage: true, modelUsed: true } }),
+    prisma.scoreResult.findMany({
+      select: { overallScore: true, scoreBand: true, aiEngine: true, errorMessage: true, modelUsed: true },
+    }),
     prisma.candidate.findMany({ select: { extractionStatus: true, ocrUsed: true, benchmarkId: true } }),
     prisma.decision.findMany({ select: { decision: true, candidateId: true } }),
-    prisma.benchmark.findMany({ select: { id: true, roleTitle: true, weights: true, _count: { select: { candidates: true } } } }),
-    prisma.aICall.findMany({ select: { provider: true, ok: true, modelUsed: true, costUsd: true, latencyMs: true }, take: 500 }),
+    prisma.benchmark.findMany({
+      select: { id: true, roleTitle: true, weights: true, _count: { select: { candidates: true } } },
+    }),
+    prisma.aICall.findMany({
+      select: { provider: true, ok: true, modelUsed: true, costUsd: true, latencyMs: true },
+      take: 500,
+    }),
   ]);
 
   const bands: Record<string, number> = { ideal: 0, strong: 0, borderline: 0, reject: 0 };
@@ -44,7 +51,7 @@ export default async function InsightsPage() {
     <div className="mx-auto max-w-7xl space-y-6 px-4 py-8 sm:px-6 lg:px-8">
       <header className="space-y-2">
         <p className="text-xs font-semibold uppercase tracking-widest text-fg-muted">Governance</p>
-        <h1 className="text-display-sm flex items-center gap-2 font-semibold tracking-tight">
+        <h1 className="flex items-center gap-2 text-display-sm font-semibold tracking-tight">
           <BarChart3 className="h-7 w-7 text-brand" /> Insights & Bias
         </h1>
         <p className="text-sm text-fg-muted">
@@ -56,7 +63,12 @@ export default async function InsightsPage() {
         <KpiCard label="Scored" value={String(scores.length)} icon={Sparkles} />
         <KpiCard label="% ideal" value={`${idealRate.toFixed(1)}%`} icon={TrendingUp} />
         <KpiCard label="% strong+" value={`${(idealRate + strongRate).toFixed(1)}%`} icon={Scale} />
-        <KpiCard label="AI failures" value={String(aiFailures)} icon={AlertCircle} tone={aiFailures > 0 ? 'warning' : undefined} />
+        <KpiCard
+          label="AI failures"
+          value={String(aiFailures)}
+          icon={AlertCircle}
+          tone={aiFailures > 0 ? 'warning' : undefined}
+        />
       </section>
 
       <div className="grid gap-4 lg:grid-cols-2">
@@ -87,7 +99,9 @@ export default async function InsightsPage() {
             {Object.entries(engineCounts).map(([k, v]) => (
               <div key={k} className="flex items-center justify-between rounded-md border border-border p-2 text-sm">
                 <span className="font-medium">{k}</span>
-                <Badge variant={k.includes('local') ? 'warning' : 'info'}>{v} ({((v / totalScored) * 100).toFixed(0)}%)</Badge>
+                <Badge variant={k.includes('local') ? 'warning' : 'info'}>
+                  {v} ({((v / totalScored) * 100).toFixed(0)}%)
+                </Badge>
               </div>
             ))}
             {Object.keys(engineCounts).length === 0 && <p className="text-sm text-fg-muted">No scores yet.</p>}
@@ -102,10 +116,14 @@ export default async function InsightsPage() {
           <CardContent>
             <DistributionBars
               segments={[
-                { label: 'Shortlist', value: decisionCounts.shortlist, color: 'bg-emerald-500' },
-                { label: 'Hold', value: decisionCounts.hold, color: 'bg-amber-500' },
-                { label: 'Reject', value: decisionCounts.reject, color: 'bg-red-500' },
-                { label: 'Pending', value: Math.max(totalScored - Object.values(decisionCounts).reduce((a, b) => a + b, 0), 0), color: 'bg-slate-400' },
+                { label: 'Shortlist', value: decisionCounts.shortlist ?? 0, color: 'bg-emerald-500' },
+                { label: 'Hold', value: decisionCounts.hold ?? 0, color: 'bg-amber-500' },
+                { label: 'Reject', value: decisionCounts.reject ?? 0, color: 'bg-red-500' },
+                {
+                  label: 'Pending',
+                  value: Math.max(totalScored - Object.values(decisionCounts).reduce((a, b) => a + b, 0), 0),
+                  color: 'bg-slate-400',
+                },
               ]}
               total={totalScored}
             />
@@ -121,7 +139,11 @@ export default async function InsightsPage() {
             {Object.entries(extractionCounts).map(([k, v]) => (
               <div key={k} className="flex items-center justify-between rounded-md border border-border p-2 text-sm">
                 <span className="capitalize">{k.replace(/_/g, ' ')}</span>
-                <Badge variant={k === 'success' ? 'success' : k === 'partial' || k === 'ocr_required' ? 'warning' : 'danger'}>{v}</Badge>
+                <Badge
+                  variant={k === 'success' ? 'success' : k === 'partial' || k === 'ocr_required' ? 'warning' : 'danger'}
+                >
+                  {v}
+                </Badge>
               </div>
             ))}
             {Object.keys(extractionCounts).length === 0 && <p className="text-sm text-fg-muted">No uploads yet.</p>}
@@ -131,7 +153,9 @@ export default async function InsightsPage() {
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle>AI cost ledger (last 500 calls)</CardTitle>
-            <CardDescription>Cost per call is captured when the provider reports it. AI errors and average latency are monitored.</CardDescription>
+            <CardDescription>
+              Cost per call is captured when the provider reports it. AI errors and average latency are monitored.
+            </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-3 sm:grid-cols-3">
             <Stat label="Total spent" value={`$${totalCost.toFixed(2)}`} />
@@ -143,7 +167,9 @@ export default async function InsightsPage() {
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle>Benchmark mix</CardTitle>
-            <CardDescription>How weighting differs across roles; helps spot benchmarks that under-weight key dimensions.</CardDescription>
+            <CardDescription>
+              How weighting differs across roles; helps spot benchmarks that under-weight key dimensions.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
@@ -165,10 +191,10 @@ export default async function InsightsPage() {
                       <tr key={b.id} className="border-t border-border">
                         <td className="px-2 py-2 font-medium">{b.roleTitle}</td>
                         <td className="px-2 py-2 text-right">{b._count.candidates}</td>
-                        <td className="px-2 py-2 text-right tabular">{w.years ?? '-'}</td>
-                        <td className="px-2 py-2 text-right tabular">{w.primarySkillDepth ?? '-'}</td>
-                        <td className="px-2 py-2 text-right tabular">{w.architectureArtifacts ?? '-'}</td>
-                        <td className="px-2 py-2 text-right tabular">{w.leadership ?? '-'}</td>
+                        <td className="tabular px-2 py-2 text-right">{w.years ?? '-'}</td>
+                        <td className="tabular px-2 py-2 text-right">{w.primarySkillDepth ?? '-'}</td>
+                        <td className="tabular px-2 py-2 text-right">{w.architectureArtifacts ?? '-'}</td>
+                        <td className="tabular px-2 py-2 text-right">{w.leadership ?? '-'}</td>
                       </tr>
                     );
                   })}
@@ -181,21 +207,33 @@ export default async function InsightsPage() {
 
       <p className="text-xs text-fg-muted">
         Bias mitigation: we deliberately do not analyse protected attributes (gender, age, race, nationality). If you
-        want a deeper fairness audit, export the audit log and run it through your fairness toolkit of choice (e.g.
-        IBM AIF360, Fairlearn).
+        want a deeper fairness audit, export the audit log and run it through your fairness toolkit of choice (e.g. IBM
+        AIF360, Fairlearn).
       </p>
     </div>
   );
 }
 
-function KpiCard({ label, value, icon: Icon, tone }: { label: string; value: string; icon: React.ComponentType<{ className?: string }>; tone?: 'warning' }) {
+function KpiCard({
+  label,
+  value,
+  icon: Icon,
+  tone,
+}: {
+  label: string;
+  value: string;
+  icon: React.ComponentType<{ className?: string }>;
+  tone?: 'warning';
+}) {
   return (
     <div className="rounded-xl border border-border bg-card p-4">
       <div className="flex items-center justify-between">
         <span className="text-xs font-semibold uppercase tracking-widest text-fg-muted">{label}</span>
         <Icon className="h-4 w-4 text-fg-muted" />
       </div>
-      <div className={`mt-2 text-display-md font-bold tabular ${tone === 'warning' ? 'text-amber-500' : 'text-fg'}`}>{value}</div>
+      <div className={`tabular mt-2 text-display-md font-bold ${tone === 'warning' ? 'text-amber-500' : 'text-fg'}`}>
+        {value}
+      </div>
     </div>
   );
 }
@@ -204,12 +242,18 @@ function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-md border border-border p-3">
       <div className="text-[11px] uppercase tracking-wider text-fg-muted">{label}</div>
-      <div className="mt-1 text-xl font-bold tabular">{value}</div>
+      <div className="tabular mt-1 text-xl font-bold">{value}</div>
     </div>
   );
 }
 
-function DistributionBars({ segments, total }: { segments: { label: string; value: number; color: string }[]; total: number }) {
+function DistributionBars({
+  segments,
+  total,
+}: {
+  segments: { label: string; value: number; color: string }[];
+  total: number;
+}) {
   return (
     <div className="space-y-3">
       <div className="flex h-3 w-full overflow-hidden rounded-full bg-bg-muted">
@@ -223,7 +267,7 @@ function DistributionBars({ segments, total }: { segments: { label: string; valu
           <div key={s.label} className="flex items-center gap-2">
             <span className={`h-2 w-2 rounded-full ${s.color}`} />
             <span className="truncate text-fg-muted">{s.label}</span>
-            <span className="ml-auto font-semibold tabular">{s.value}</span>
+            <span className="tabular ml-auto font-semibold">{s.value}</span>
           </div>
         ))}
       </div>
