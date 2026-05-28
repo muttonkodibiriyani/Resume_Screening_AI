@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security report
+    url: mailto:security@alshaya.com
+    about: Please email any suspected security issue privately. Do NOT file a public issue.

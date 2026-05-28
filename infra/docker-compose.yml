@@ -1,0 +1,60 @@
+version: "3.9"
+
+# One-command local prod-like stack: Postgres + the app
+# Usage:
+#   docker compose --env-file ../.env.docker up --build
+#
+# Notes:
+# - Builds with DATABASE_PROVIDER=postgresql so prisma/schema.postgres.prisma is used.
+# - The Postgres user/password/db default to "recruit" but should be overridden via .env.
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-recruit}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-recruit_dev_password}
+      POSTGRES_DB: ${POSTGRES_DB:-recruit}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-recruit}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    ports:
+      - "5432:5432"
+
+  app:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile
+      args:
+        DATABASE_PROVIDER: postgresql
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DATABASE_PROVIDER: postgresql
+      DATABASE_URL: postgresql://${POSTGRES_USER:-recruit}:${POSTGRES_PASSWORD:-recruit_dev_password}@db:5432/${POSTGRES_DB:-recruit}?schema=public
+      AUTH_SECRET: ${AUTH_SECRET:-please-change-me-in-production-32-chars-min}
+      STORAGE_PROVIDER: ${STORAGE_PROVIDER:-local}
+      QUEUE_PROVIDER: ${QUEUE_PROVIDER:-memory}
+      GOOGLE_GEMINI_API_KEY: ${GOOGLE_GEMINI_API_KEY:-}
+      GOOGLE_GEMINI_MODEL: ${GOOGLE_GEMINI_MODEL:-gemini-2.5-flash}
+      AZURE_OPENAI_API_KEY: ${AZURE_OPENAI_API_KEY:-}
+      AZURE_OPENAI_ENDPOINT: ${AZURE_OPENAI_ENDPOINT:-}
+      AZURE_OPENAI_DEPLOYMENT: ${AZURE_OPENAI_DEPLOYMENT:-}
+      TAVILY_API_KEY: ${TAVILY_API_KEY:-}
+      APPLICATIONINSIGHTS_CONNECTION_STRING: ${APPLICATIONINSIGHTS_CONNECTION_STRING:-}
+    ports:
+      - "3000:3000"
+    volumes:
+      - uploads:/app/uploads
+
+volumes:
+  pgdata:
+  uploads:

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "namePrefix":          { "value": "alsh-recruit-dev" },
+    "location":            { "value": "uaenorth" },
+    "environment":         { "value": "dev" },
+    "containerImage":      { "value": "alshrecruitdevacr.azurecr.io/recruit:dev" },
+    "postgresAdminLogin":  { "value": "recruitadmin" },
+    "postgresAdminPassword": { "value": "<set-with-az-cli-or-pipeline-variable>" },
+    "authSecret":          { "value": "<set-with-az-cli-or-pipeline-variable>" },
+    "geminiApiKey":        { "value": "" },
+    "tavilyApiKey":        { "value": "" },
+    "azureOpenAiApiKey":   { "value": "" },
+    "azureOpenAiEndpoint": { "value": "" },
+    "azureOpenAiDeployment": { "value": "" },
+    "customDomainName":    { "value": "" }
+  }
+}

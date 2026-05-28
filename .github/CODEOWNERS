@@ -1,0 +1,13 @@
+# Default owners for everything in the repo
+*                              @muttonkodibiriyani
+
+# Sensitive areas require platform-team review
+/infra/                        @muttonkodibiriyani
+/.github/                      @muttonkodibiriyani
+/prisma/                       @muttonkodibiriyani
+/src/middleware.ts             @muttonkodibiriyani
+/src/lib/auth.ts               @muttonkodibiriyani
+/src/lib/rbac.ts               @muttonkodibiriyani
+/src/lib/ai/                   @muttonkodibiriyani
+/docs/SECURITY.md              @muttonkodibiriyani
+/docs/SCORING_ALGORITHM.md     @muttonkodibiriyani

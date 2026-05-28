@@ -1,0 +1,19 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "namePrefix":          { "value": "alsh-recruit-prod" },
+    "location":            { "value": "uaenorth" },
+    "environment":         { "value": "prod" },
+    "containerImage":      { "value": "alshrecruitprodacr.azurecr.io/recruit:1.0.0" },
+    "postgresAdminLogin":  { "value": "recruitadmin" },
+    "postgresAdminPassword": { "value": "<set-with-az-cli-or-pipeline-variable>" },
+    "authSecret":          { "value": "<set-with-az-cli-or-pipeline-variable>" },
+    "geminiApiKey":        { "value": "" },
+    "tavilyApiKey":        { "value": "" },
+    "azureOpenAiApiKey":   { "value": "" },
+    "azureOpenAiEndpoint": { "value": "" },
+    "azureOpenAiDeployment": { "value": "" },
+    "customDomainName":    { "value": "recruit.alshaya.com" }
+  }
+}

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: alshaya-recruit
+  labels:
+    app.kubernetes.io/name: alshaya-recruit
+    app.kubernetes.io/part-of: talent-acquisition

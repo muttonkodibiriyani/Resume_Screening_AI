@@ -1,0 +1,94 @@
+name: CD
+
+on:
+  push:
+    tags: [ 'v*.*.*' ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment (dev|stage|prod)'
+        required: true
+        default: 'dev'
+
+concurrency:
+  group: cd-${{ github.event.inputs.environment || 'tag' }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write   # required for OIDC federated login to Azure
+
+jobs:
+  release:
+    name: Build, push, deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: ${{ github.event.inputs.environment || 'prod' }}
+    env:
+      ENV: ${{ github.event.inputs.environment || 'prod' }}
+      IMAGE_TAG: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: ACR login
+        run: az acr login --name ${{ secrets.AZURE_CONTAINER_REGISTRY }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build & push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: infra/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.AZURE_CONTAINER_REGISTRY }}.azurecr.io/recruit:${{ env.IMAGE_TAG }}
+            ${{ secrets.AZURE_CONTAINER_REGISTRY }}.azurecr.io/recruit:${{ env.ENV }}
+          build-args: |
+            DATABASE_PROVIDER=postgresql
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Deploy Bicep
+        run: |
+          az deployment group create \
+            --resource-group rg-alshaya-recruit-${{ env.ENV }} \
+            --template-file infra/azure/main.bicep \
+            --parameters @infra/azure/parameters.${{ env.ENV }}.json \
+            --parameters \
+              containerImage=${{ secrets.AZURE_CONTAINER_REGISTRY }}.azurecr.io/recruit:${{ env.IMAGE_TAG }} \
+              postgresAdminPassword=${{ secrets.POSTGRES_ADMIN_PASSWORD }} \
+              authSecret=${{ secrets.AUTH_SECRET }} \
+              geminiApiKey=${{ secrets.GOOGLE_GEMINI_API_KEY }} \
+              tavilyApiKey=${{ secrets.TAVILY_API_KEY }} \
+              azureOpenAiApiKey=${{ secrets.AZURE_OPENAI_API_KEY }} \
+              azureOpenAiEndpoint=${{ secrets.AZURE_OPENAI_ENDPOINT }} \
+              azureOpenAiDeployment=${{ secrets.AZURE_OPENAI_DEPLOYMENT }}
+
+      - name: Run database migrations
+        run: |
+          npm ci --no-audit --no-fund
+          cp prisma/schema.postgres.prisma prisma/schema.prisma
+          npx prisma migrate deploy
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Smoke test
+        run: |
+          ENDPOINT=$(az deployment group show -g rg-alshaya-recruit-${{ env.ENV }} -n main --query "properties.outputs.frontDoorEndpoint.value" -o tsv)
+          for i in 1 2 3 4 5; do
+            if curl -sf "https://$ENDPOINT/api/system/status" >/dev/null; then
+              echo "OK"; exit 0
+            fi
+            sleep 10
+          done
+          echo "Smoke test failed" >&2
+          exit 1
