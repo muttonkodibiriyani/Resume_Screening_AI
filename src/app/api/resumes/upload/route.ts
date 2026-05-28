@@ -20,7 +20,20 @@ import { FILE_LIMITS } from '@/lib/validation/schemas';
 import { saveResume } from '@/lib/storage';
 import { jsonParse } from '@/lib/utils';
 import { fileTypeFromBuffer } from 'file-type';
-import { createHash } from 'node:crypto';
+
+/** Web-Crypto SHA-256 hex digest. Works in Node (>=16) and Edge runtimes. */
+async function sha256Hex(buf: Buffer): Promise<string> {
+  // Copy into a fresh ArrayBuffer-backed Uint8Array so the BufferSource
+  // typing of `crypto.subtle.digest` is happy (Node Buffer's backing
+  // ArrayBufferLike may be SharedArrayBuffer in some environments).
+  const view = new Uint8Array(buf.byteLength);
+  view.set(buf);
+  const digest = await crypto.subtle.digest('SHA-256', view);
+  const bytes = new Uint8Array(digest);
+  let out = '';
+  for (let i = 0; i < bytes.length; i++) out += bytes[i]!.toString(16).padStart(2, '0');
+  return out;
+}
 
 export const maxDuration = 300; // 5 minutes; the streaming response keeps the connection alive
 
@@ -148,7 +161,7 @@ export const POST = apiHandler(async (req: NextRequest) => {
             const phone = guessPhone(extraction.text);
 
             // Persist original file
-            const sha = createHash('sha256').update(buffer).digest('hex').slice(0, 16);
+            const sha = (await sha256Hex(buffer)).slice(0, 16);
             const storage = await saveResume({
               buffer,
               fileName: file.name,

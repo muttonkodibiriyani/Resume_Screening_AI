@@ -1,4 +1,3 @@
-import { randomUUID } from 'node:crypto';
 import { logger } from '../logger';
 import type { Queue, QueueJob, QueueHandler } from './types';
 
@@ -12,7 +11,7 @@ export class MemoryQueue implements Queue {
   private running = false;
 
   async enqueue<T>(type: string, payload: T): Promise<string> {
-    const job: QueueJob<T> = { id: randomUUID(), type, payload, enqueuedAt: new Date().toISOString() };
+    const job: QueueJob<T> = { id: crypto.randomUUID(), type, payload, enqueuedAt: new Date().toISOString() };
     this.jobs.push(job as QueueJob);
     if (this.running) {
       // Schedule on the microtask queue so callers don't block.
