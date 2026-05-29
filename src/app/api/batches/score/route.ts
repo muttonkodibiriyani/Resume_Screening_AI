@@ -227,11 +227,14 @@ export const POST = apiHandler(async (req: NextRequest) => {
       });
 
       await logAudit({
-        userId: 'power-automate',
+        // userId is a real FK -> User; the Power Automate caller is not a
+        // seeded user, so we attribute the action via `details.actor` instead.
+        userId: null,
         action: 'BATCH_SCORED',
         entityType: 'Candidate',
         entityId: created.id,
         details: {
+          actor: 'power-automate',
           batchId,
           engine: scoring.engine,
           model: scoring.modelUsed,
@@ -271,10 +274,10 @@ export const POST = apiHandler(async (req: NextRequest) => {
         error: message,
       });
       await logAudit({
-        userId: 'power-automate',
+        userId: null,
         action: 'BATCH_PROCESSING_FAILED',
         entityType: 'Candidate',
-        details: { batchId, fileName: f.name, error: message },
+        details: { actor: 'power-automate', batchId, fileName: f.name, error: message },
         ipAddress: ip,
       });
     }
