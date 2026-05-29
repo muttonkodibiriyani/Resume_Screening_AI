@@ -23,10 +23,39 @@ const MUTATING_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
  * The middleware sets the CSRF cookie on the GET to /login, so any subsequent
  * mutating request from the SPA already has the token to echo.
  */
-const CSRF_BYPASS = ['/api/auth/login'];
+const CSRF_BYPASS = [
+  '/api/auth/login',
+  // Power Automate / Copilot Studio cannot participate in the double-submit
+  // cookie pattern; these endpoints authenticate via a pre-shared bearer token
+  // (POWER_AUTOMATE_API_KEY) checked inside the handler.
+  '/api/batches/score',
+];
 
 function isCsrfExempt(pathname: string): boolean {
   return CSRF_BYPASS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+}
+
+/** Constant-time string comparison (Edge + Node compatible). */
+function constantTimeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let r = 0;
+  for (let i = 0; i < a.length; i++) r |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return r === 0;
+}
+
+/**
+ * Verifies an `Authorization: Bearer <token>` header against the supplied
+ * pre-shared secret. Returns true only on exact constant-time match.
+ *
+ * Intended for server-to-server callers (Power Automate, Copilot Studio,
+ * Logic Apps) that cannot participate in the cookie-based session flow.
+ */
+export function verifyBearerToken(req: NextRequest, expected: string | undefined): boolean {
+  if (!expected) return false;
+  const header = req.headers.get('authorization') ?? '';
+  const match = /^Bearer\s+(.+)$/i.exec(header.trim());
+  if (!match) return false;
+  return constantTimeEqual(match[1]!.trim(), expected);
 }
 
 export interface ApiError {

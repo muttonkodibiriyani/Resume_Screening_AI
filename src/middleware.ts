@@ -23,9 +23,15 @@ const PUBLIC_PATHS = [
   '/login',
   '/api/auth/login',
   '/api/system/status',
+  // Server-to-server endpoint for Power Automate / Copilot Studio. Bearer-token
+  // auth is enforced inside the handler (verifyBearerToken vs
+  // POWER_AUTOMATE_API_KEY) so the middleware just lets the request through.
+  '/api/batches/score',
   '/_next',
   '/favicon.ico',
+  '/favicon.svg',
   '/icon.svg',
+  '/robots.txt',
   '/manifest.json',
 ];
 

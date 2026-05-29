@@ -65,6 +65,16 @@ const EnvSchema = z.object({
     .string()
     .optional()
     .transform((v) => v || undefined),
+  /**
+   * Pre-shared bearer token used by Power Automate / Copilot Studio when calling
+   * server-to-server endpoints like POST /api/batches/score. Optional - set this
+   * in App Service / Key Vault if you wire Power Platform into the API.
+   */
+  POWER_AUTOMATE_API_KEY: z
+    .string()
+    .min(32, 'POWER_AUTOMATE_API_KEY must be at least 32 chars')
+    .optional()
+    .transform((v) => v || undefined),
 
   APPLICATIONINSIGHTS_CONNECTION_STRING: z.string().optional(),
   UPSTASH_REDIS_REST_URL: z.string().optional(),
