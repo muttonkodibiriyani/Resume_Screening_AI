@@ -136,7 +136,7 @@ jobs:
               azureOpenAiDeployment=${{ secrets.AZURE_OPENAI_DEPLOYMENT }}
 
       - name: Setup Node for Prisma
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: '22'
           cache: 'npm'
