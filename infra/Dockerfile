@@ -4,7 +4,7 @@
 # - Stage 2: builder   -> compile Next.js (standalone) + generate Prisma client
 # - Stage 3: runner    -> tiny non-root runtime image
 
-ARG NODE_IMAGE=node:20-bookworm-slim
+ARG NODE_IMAGE=node:22-bookworm-slim
 
 # ---------- deps ----------
 FROM ${NODE_IMAGE} AS deps

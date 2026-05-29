@@ -23,7 +23,7 @@ jobs:
       matrix:
         language: ['javascript-typescript']
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
@@ -32,8 +32,8 @@ jobs:
           queries: security-extended,security-and-quality
 
       - name: Setup Node
-        uses: actions/setup-node@v4
-        with: { node-version: 20, cache: npm }
+        uses: actions/setup-node@v5
+        with: { node-version: 22, cache: npm }
       - run: npm ci --no-audit --no-fund
       - run: npx prisma generate
 
