@@ -70,6 +70,11 @@ export default function AIResearchBenchmarkPage() {
         <p className="mt-1 text-sm text-muted-foreground">
           AI + online search (when configured) builds an ideal-candidate profile for the role.
         </p>
+        <p className="mt-2 text-xs text-muted-foreground">
+          <strong className="text-foreground">Scope:</strong> technology roles only — engineering, data / AI / ML, cloud
+          / DevOps / SRE, security, architecture, QA, IT operations, and technical product / programme management.
+          Non-tech titles (sales, HR, medical, legal, etc.) will be politely declined.
+        </p>
       </div>
 
       {loading ? (

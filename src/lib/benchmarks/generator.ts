@@ -11,23 +11,40 @@ import { searchWeb, SearchResult } from '../ai/search';
 import { parseAIJson } from '../ai/json-parse';
 import { getAIEngineStatus, AIEngine } from '../ai/config';
 import { BENCHMARK_TEMPLATES, DEFAULT_WEIGHTS, findTemplateByRole } from './templates';
+import { prisma } from '../db';
+import { logger } from '../logger';
+import { AIError } from '../ai/errors';
 
-const BENCHMARK_SYSTEM_PROMPT = `You are an expert enterprise hiring benchmark researcher and role definition specialist for a Tier-1 retail enterprise (Alshaya).
+export const BENCHMARK_PROMPT_VERSION = '2026-05-29-v2';
 
-Your job: create a deep, opinionated, market-aware IDEAL CANDIDATE benchmark JSON for the requested role.
+const BENCHMARK_SYSTEM_PROMPT = `You are an expert enterprise hiring benchmark researcher for the TECHNOLOGY ORGANISATION of a Tier-1 retail enterprise (Alshaya).
 
-Use the internal benchmark framework (5 dimensions: technical depth, breadth & ecosystem, delivery footprint, leadership, modernization) and any provided online research snippets.
+SCOPE - YOU ONLY GENERATE BENCHMARKS FOR ROLES IN:
+- Software engineering (frontend, backend, full-stack, mobile, embedded)
+- Data / analytics / AI / ML / data engineering / BI
+- Cloud / DevOps / SRE / platform / infrastructure
+- Security / cyber / GRC / IAM
+- Architecture / enterprise architecture / solution architecture
+- Product / programme / project management for tech delivery
+- QA / SDET / test automation
+- IT operations, networking, ERP / CRM / commerce technical roles (e.g. SAP, Salesforce, Oracle Retail technical specialists)
 
-STRICT RULES:
+IF THE REQUESTED ROLE IS CLEARLY OUTSIDE THIS SCOPE (e.g. "Surgeon", "Chef", "Pilot", "Lawyer", "Sales clerk", "HR coordinator", "Marketing creative"), DO NOT INVENT A METAPHORICAL TECH EQUIVALENT. Instead return EXACTLY this JSON and nothing else:
+{ "outOfScope": true, "reason": "This platform generates benchmarks for technology roles only. The requested role appears to be non-technical: <one-sentence reason>." }
+
+TITLE PRESERVATION:
+- The "roleTitle" field MUST be the user's input role title, normalized only for capitalisation and punctuation. DO NOT rewrite, embellish, or append parenthetical specialisations. Example: input "Backend Engineer" -> "Backend Engineer", NOT "Backend Engineer (Critical Microservices Specialist)".
+
+GENERAL RULES:
 - Output STRICT JSON only. No markdown. No commentary outside JSON.
 - Be specific to the role and skill family. Avoid generic platitudes.
 - Include real red flags that recruiters should watch for.
 - Include weights summing to 100 across: years, primarySkillDepth, architectureArtifacts, projectFootprint, leadership, modernization, certifications, communication.
 - Include 5-8 sharp interview questions.
-- Clearly populate "sources" if online research was used.
+- Populate "sources" when online research snippets are provided.
 - Set "generationMode" to one of: "gemini", "azure-openai", "gemini+search", "azure+search", "local-rule".
 
-JSON shape:
+JSON shape for a valid (in-scope) benchmark:
 {
   "roleTitle": "", "skillFamily": "", "seniority": "", "minExperience": 0, "domainContext": "",
   "primarySkills": [], "mandatorySkills": [], "goodToHaveSkills": [],
@@ -43,6 +60,73 @@ JSON shape:
   "generationMode": "gemini|azure-openai|gemini+search|azure+search|local-rule",
   "sources": []
 }`;
+
+/** Thrown when the AI declines to generate because the requested role isn't a technology role. */
+export class BenchmarkOutOfScopeError extends Error {
+  reason: string;
+  constructor(reason: string) {
+    super(reason);
+    this.name = 'BenchmarkOutOfScopeError';
+    this.reason = reason;
+  }
+}
+
+async function recordAICall(args: {
+  provider: 'gemini' | 'azure-openai';
+  modelUsed?: string;
+  ok: boolean;
+  latencyMs: number;
+  errorKind?: string;
+  errorMessage?: string;
+}): Promise<void> {
+  try {
+    await prisma.aICall.create({
+      data: {
+        provider: args.provider,
+        modelUsed: args.modelUsed ?? null,
+        promptVersion: BENCHMARK_PROMPT_VERSION,
+        purpose: 'benchmark_generation',
+        ok: args.ok,
+        latencyMs: args.latencyMs,
+        errorKind: args.errorKind ?? null,
+        errorMessage: args.errorMessage ?? null,
+      },
+    });
+  } catch (e) {
+    // Telemetry is best-effort; never break a successful generation because logging failed.
+    logger.warn('aICall log (benchmark) failed', { error: String(e) });
+  }
+}
+
+async function callEngine(
+  engine: AIEngine,
+  prompt: string,
+): Promise<{ text: string; model: string; provider: 'gemini' | 'azure-openai' }> {
+  const started = Date.now();
+  const provider: 'gemini' | 'azure-openai' = engine.startsWith('gemini') ? 'gemini' : 'azure-openai';
+  try {
+    const res =
+      provider === 'gemini'
+        ? await callGemini(prompt, { maxTokens: 6000 })
+        : await callAzureOpenAI(prompt, { maxTokens: 4000 });
+    await recordAICall({ provider, modelUsed: res.model, ok: true, latencyMs: Date.now() - started });
+    return { text: res.text, model: res.model, provider };
+  } catch (err) {
+    const ae = err instanceof AIError ? err : null;
+    await recordAICall({
+      provider,
+      ok: false,
+      latencyMs: Date.now() - started,
+      errorKind: ae?.kind ?? 'unknown',
+      errorMessage: err instanceof Error ? err.message : String(err),
+    });
+    throw err;
+  }
+}
+
+function isOutOfScopePayload(p: Record<string, unknown> | null): p is { outOfScope: true; reason?: string } {
+  return !!p && p.outOfScope === true;
+}
 
 export interface GenerateBenchmarkInput {
   roleTitle: string;
@@ -112,11 +196,11 @@ Hiring notes: ${input.hiringNotes || 'None'}
             sources.map((s, i) => `[${i + 1}] ${s.title} (${s.url}): ${s.snippet}`).join('\n')
           : '\nOnline research returned no results.';
       const fullPrompt = `${BENCHMARK_SYSTEM_PROMPT}\n\n${userPrompt}${sourceText}\n\nReturn JSON only.`;
-      const { text: raw } =
-        preferred === 'gemini+search'
-          ? await callGemini(fullPrompt, { maxTokens: 6000 })
-          : await callAzureOpenAI(fullPrompt, { maxTokens: 4000 });
+      const { text: raw } = await callEngine(preferred, fullPrompt);
       const parsed = parseAIJson<Record<string, unknown>>(raw);
+      if (isOutOfScopePayload(parsed)) {
+        throw new BenchmarkOutOfScopeError(parsed.reason || 'Requested role is not a technology role.');
+      }
       if (parsed) {
         return {
           benchmark: normalizeBenchmark(parsed, input, preferred, 'ai-research', sources),
@@ -125,8 +209,9 @@ Hiring notes: ${input.hiringNotes || 'None'}
           sources,
         };
       }
-    } catch {
-      // fall through to AI-only
+    } catch (e) {
+      if (e instanceof BenchmarkOutOfScopeError) throw e; // do not fall through silently
+      // otherwise fall through to AI-only
     }
   }
 
@@ -134,11 +219,11 @@ Hiring notes: ${input.hiringNotes || 'None'}
   if (preferred === 'gemini' || preferred === 'azure-openai') {
     try {
       const fullPrompt = `${BENCHMARK_SYSTEM_PROMPT}\n\n${userPrompt}\n(No online search results available - use AI reasoning + internal framework.)\n\nReturn JSON only.`;
-      const { text: raw } =
-        preferred === 'gemini'
-          ? await callGemini(fullPrompt, { maxTokens: 6000 })
-          : await callAzureOpenAI(fullPrompt, { maxTokens: 4000 });
+      const { text: raw } = await callEngine(preferred, fullPrompt);
       const parsed = parseAIJson<Record<string, unknown>>(raw);
+      if (isOutOfScopePayload(parsed)) {
+        throw new BenchmarkOutOfScopeError(parsed.reason || 'Requested role is not a technology role.');
+      }
       if (parsed) {
         return {
           benchmark: normalizeBenchmark(parsed, input, preferred, 'ai-only', []),
@@ -147,7 +232,8 @@ Hiring notes: ${input.hiringNotes || 'None'}
           sources: [],
         };
       }
-    } catch {
+    } catch (e) {
+      if (e instanceof BenchmarkOutOfScopeError) throw e;
       // fall through to local
     }
   }
@@ -178,8 +264,12 @@ function normalizeBenchmark(
   sources: SearchResult[],
 ): GeneratedBenchmark {
   const w = (ai.weights as Record<string, number>) || DEFAULT_WEIGHTS;
+  // The user's input is the source of truth for the role title. If the AI
+  // returns a different title we ignore it (otherwise Gemini sometimes
+  // appends a parenthetical "(... Specialist)" that confuses recruiters).
+  const userTitle = (input.roleTitle || '').trim();
   return {
-    roleTitle: String(ai.roleTitle || input.roleTitle),
+    roleTitle: userTitle || String(ai.roleTitle || 'Untitled role'),
     skillFamily: String(ai.skillFamily || input.skillFamily || 'General'),
     seniority: String(ai.seniority || input.seniority || 'Senior'),
     minExperience: Number(ai.minExperience ?? input.minExperience ?? 5),

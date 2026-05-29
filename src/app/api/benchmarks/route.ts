@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
-import { generateBenchmark } from '@/lib/benchmarks/generator';
+import { generateBenchmark, BenchmarkOutOfScopeError } from '@/lib/benchmarks/generator';
 import { logAudit } from '@/lib/audit';
 import { callerIp } from '@/lib/auth';
 import { apiHandler, parseJson } from '@/lib/api';
@@ -29,7 +29,22 @@ export const POST = apiHandler(async (req) => {
   }
 
   const input = await parseJson(req, benchmarkCreateSchema);
-  const generated = await generateBenchmark(input);
+  let generated;
+  try {
+    generated = await generateBenchmark(input);
+  } catch (e) {
+    if (e instanceof BenchmarkOutOfScopeError) {
+      return NextResponse.json(
+        {
+          error: e.reason,
+          code: 'BENCHMARK_OUT_OF_SCOPE',
+          hint: 'This platform generates benchmarks for technology roles (engineering, data, cloud, security, architecture, IT, technical product). Try a tech role title.',
+        },
+        { status: 422 },
+      );
+    }
+    throw e;
+  }
   const b = generated.benchmark;
 
   const created = await prisma.benchmark.create({
